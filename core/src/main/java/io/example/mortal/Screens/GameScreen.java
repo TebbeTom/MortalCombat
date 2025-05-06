@@ -1,5 +1,7 @@
-package io.example.mortal;
+package io.example.mortal.Screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,11 +9,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import io.example.mortal.Main;
+
 /** First screen of the application. Displayed after the application is created. */
 public class GameScreen implements Screen {
-    Texture background;
-    SpriteBatch spriteBatch;
-    FitViewport viewport;
+    private Texture background;
+    private SpriteBatch spriteBatch;
+    private FitViewport viewport;
+    private Main game;
+
+    public GameScreen(Main game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -22,7 +31,18 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        input();
+        logic();
         draw();
+    }
+
+    private void input() {
+        if (Gdx.input.isKeyPressed(Input.Keys.D))
+            game.player1.isMovingRight = true;
+    }
+
+    private void logic() {
+
     }
 
     private void draw() {
