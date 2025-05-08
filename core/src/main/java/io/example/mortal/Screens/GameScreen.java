@@ -37,8 +37,20 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
+        if (Gdx.input.isKeyPressed(Input.Keys.W))
+            game.player1.jump();
+        if (Gdx.input.isKeyPressed(Input.Keys.A))
+            game.player1.isMovingLeft = true;
+        if (Gdx.input.isKeyPressed(Input.Keys.S))
+            game.player1.duck();
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             game.player1.isMovingRight = true;
+        if (Gdx.input.isKeyPressed(Input.Keys.E))
+            game.player1.punch();
+        if (Gdx.input.isKeyPressed(Input.Keys.F))
+            game.player1.kick();
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            game.togglePause();
     }
 
     private void logic() {

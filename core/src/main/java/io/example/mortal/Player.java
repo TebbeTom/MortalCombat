@@ -12,6 +12,7 @@ public class Player {
 	public boolean isMovingRight = false;
 	public float gravity = -20f;
 	public boolean isJumping = false;
+	public boolean isDucking = false;
 	public float width = 600f;
 
 
@@ -34,11 +35,13 @@ public class Player {
 	}
 
     public void jump() {
-
+		if (isJumping)
+			return;
+		
 	}
 
 	public void duck() {
-
+		isDucking = true;
 	}
 
 	public void punch() {
