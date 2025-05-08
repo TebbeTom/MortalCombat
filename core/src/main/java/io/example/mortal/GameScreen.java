@@ -15,7 +15,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        background = new Texture("theBackground.jpeg");
+        background = new Texture("SunsetTempleBackground.png");
         viewport = new FitViewport(900, 450);
         spriteBatch = new SpriteBatch();
     }
