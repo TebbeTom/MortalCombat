@@ -8,12 +8,18 @@ public class Player {
 	public Vector2 speed = new Vector2(100f, 200f);;
     public float health;
 	public float maxHealth;
-	public boolean isMovingLeft = false;
-	public boolean isMovingRight = false;
 	public float gravity = -20f;
-	public boolean isJumping = false;
-	public boolean isDucking = false;
 	public float width = 600f;
+
+	private boolean isMovingLeft = false;
+	private boolean isMovingRight = false;
+	private boolean isJumping = false;
+	private boolean isDucking = false;
+	private boolean isPunching = false;
+	private boolean isKicking = false;
+
+	public float punchAnimTime = 0f;
+	public float kickAnimTime = 0f;
 
 
     public Player(Vector2 startPosition, float health) {
@@ -24,6 +30,8 @@ public class Player {
 
 
 	public void update(float delta) {
+		if(isPunching)
+			punchAnimTime += delta;
 		position.x += (isMovingLeft ? 1 : 0) * speed.x * delta;
 		position.x -= (isMovingRight? 1 : 0) * speed.x * delta;
 		position.x = MathUtils.clamp(position.x, width/2, 500);
