@@ -1,99 +1,98 @@
+
 package io.example.mortal;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 public class MainMenuScreen implements Screen{
-    private final Game game;
-    private Stage stage;
-    private Skin skin;
 
-    public MainMenuScreen(Game game) {
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private OrthographicCamera camera;
+
+    private Rectangle startButtonBounds;
+    private Rectangle exitButtonBounds;
+
+    private Main game;
+
+    public MainMenuScreen(Main game){
         this.game = game;
     }
 
     @Override
     public void show() {
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
+        batch = new SpriteBatch();
+        font = new BitmapFont(); // Standard-Arial-artige BitmapFont
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 480); // Bildschirmgröße
 
-        // Skin laden – du brauchst eine Skin-Datei in assets
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        // Buttons als Rechtecke definieren
+        startButtonBounds = new Rectangle(300, 250, 200, 50);
+        exitButtonBounds = new Rectangle(300, 150, 200, 50);
 
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
-
-        Label title = new Label("Fighting Game", skin, "title");
-        TextButton startButton = new TextButton("Start Game", skin);
-        TextButton optionsButton = new TextButton("Optionen", skin);
-        TextButton exitButton = new TextButton("Beenden", skin);
-
-        // Buttons hinzufügen
-        table.add(title).padBottom(40).row();
-        table.add(startButton).width(200).padBottom(20).row();
-        table.add(optionsButton).width(200).padBottom(20).row();
-        table.add(exitButton).width(200).padBottom(20).row();
-
-        // Button-Listener
-        startButton.addListener(new ChangeListener() {
+        // Input Processor setzen
+        Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GameScreen());
-            }
-        });
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector3 touchPos = new Vector3(screenX, screenY, 0);
+                camera.unproject(touchPos);
 
-        optionsButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Optionen gedrückt – hier eigenes Menü bauen");
-            }
-        });
+                if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
 
-        exitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                    System.out.println("Spiel starten!");
+                    game.switchScreen(new GameScreen());
+
+
+                } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
+                    Gdx.app.exit();
+                }
+                return true;
             }
         });
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        stage.draw();
+
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
+        // Hintergrundrechtecke für Buttons (einfach visuell)
+        font.draw(batch, "START", startButtonBounds.x + 60, startButtonBounds.y + 35);
+        font.draw(batch, "EXIT", exitButtonBounds.x + 70, exitButtonBounds.y + 35);
+        batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        Graphics.DisplayMode dm = Gdx.graphics.getDisplayMode();
+        Gdx.graphics.setWindowedMode(dm.width / 2, dm.height / 2);
+    }
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        skin.dispose();
+        batch.dispose();
+        font.dispose();
     }
-
-    // Unveränderte Methoden
-    public void pause() {}
-    public void resume() {}
-    public void hide() {}
 }
