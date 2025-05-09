@@ -54,7 +54,7 @@ public class Player {
 	}
 
 	public void damage(int amount) {
-		if()
+		if(isDucking)
 		health -= amount;
 		if (health < 0)
 			health = 0;
