@@ -15,6 +15,6 @@ public class Main extends Game {
     }
 
     public void togglePause() {
-        setScreen(new PauseScreen(this));
+        //setScreen(new PauseScreen(this));
     }
 }

@@ -26,18 +26,19 @@ public class Player {
 	public void update(float delta) {
 		position.x += (isMovingLeft ? 1 : 0) * speed.x * delta;
 		position.x -= (isMovingRight? 1 : 0) * speed.x * delta;
-		position.x = MathUtils.clamp(position.x, halfWidth, screenWidth - halfWidth);
+		position.x = MathUtils.clamp(position.x, width/2, 500);
 
 		speed.y += gravity;
 		position.y += (isMovingLeft ? 1 : 0) * speed.y * delta;
 		position.y -= (isMovingRight? 1 : 0) * speed.y * delta;
 		isJumping = position.y > 0;
+		
 	}
 
     public void jump() {
 		if (isJumping)
 			return;
-		
+		speed.y = 200f;
 	}
 
 	public void duck() {
@@ -50,5 +51,12 @@ public class Player {
 
 	public void kick() {
 
+	}
+
+	public void damage(int amount) {
+		if()
+		health -= amount;
+		if (health < 0)
+			health = 0;
 	}
 }
