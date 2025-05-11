@@ -53,6 +53,12 @@ public class GameScreen implements Screen {
         spriteBatch = new SpriteBatch();
         player1Sprite = new Sprite(game.player1.getKeyframe());
         player2Sprite = new Sprite(game.player2.getKeyframe());
+        player1Sprite.setOrigin(25f, 0f);
+        player1Sprite.setScale(playerScaleFactor);
+        player2Sprite.setOrigin(25f, 0f);
+        player2Sprite.setScale(playerScaleFactor);
+
+
         
         font = new BitmapFont();
 
@@ -77,38 +83,36 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
-        if (Gdx.input.isKeyPressed(Input.Keys.W))
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
             game.player1.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.A))
             game.player1.setMovingLeft(true);
         if (Gdx.input.isKeyPressed(Input.Keys.S))
-            game.player1.duck();
+            game.player1.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             game.player1.setMovingRight(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.E))
+        if (Gdx.input.isKeyPressed(Input.Keys.W))
             game.player1.punch();
-        if (Gdx.input.isKeyPressed(Input.Keys.F))
-            game.player1.kick();
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+            game.player1.duck();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.O))
-            game.player2.jump();
-        if (Gdx.input.isKeyPressed(Input.Keys.K))
+        if (Gdx.input.isKeyPressed(Input.Keys.L))
             game.player2.setMovingLeft(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.L ))
+        if (Gdx.input.isKeyPressed(Input.Keys.APOSTROPHE))
+            game.player2.setMovingRight(true);
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT))
+            game.player2.jump();
+        if (Gdx.input.isKeyPressed(Input.Keys.M ))
             game.player2.duck();
         if (Gdx.input.isKeyPressed(Input.Keys.SEMICOLON))
-            game.player2.setMovingRight(true);
+            game.player2.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.P))
             game.player2.punch();
-        if (Gdx.input.isKeyPressed(Input.Keys.F))
-            game.player2.kick();
-        if (Gdx.input.isKeyPressed(Input.Keys.APOSTROPHE))
-            isPaused = !isPaused;
 
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            isPaused = !isPaused;
         if (Gdx.input.isKeyPressed(Input.Keys.G))
             toggleFullscreen();
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            drawPauseMenu();
     }
 
     private void logic(float delta) {
@@ -122,9 +126,7 @@ public class GameScreen implements Screen {
     private void syncSprite(Player player, Sprite sprite) {
         sprite.setX(player.position.x);
         sprite.setY(player.position.y);
-        sprite.setOrigin(25f, 0f);
         sprite.setScale(playerScaleFactor);
-
     }
 
     private void draw() {
