@@ -9,11 +9,20 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
+
 import io.example.mortal.Player;
 
 
@@ -22,14 +31,20 @@ import io.example.mortal.Player;
 
 
 import io.example.mortal.Main;
+import io.example.mortal.MainMenuScreen;
 
 /** First screen of the application. Displayed after the application is created. */
 public class GameScreen implements Screen {
     private Texture background;
     private SpriteBatch spriteBatch;
-    private FitViewport viewport;
+    private StretchViewport viewport;
     private OrthographicCamera camera;
     private BitmapFont font;
+
+    private Stage pauseStage;
+    private Skin skin;
+    private TextureAtlas skinAtlas;                        // CHANGED: atlas for skin
+
     
     private final int VIRTUAL_WIDTH = 1280;
     private final int VIRTUAL_HEIGHT = 720;
@@ -49,7 +64,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        background = new Texture("TeahouseNight.png");
+        background = new Texture("RampartSnow.png");
         spriteBatch = new SpriteBatch();
         player1Sprite = new Sprite(game.player1.getKeyframe());
         player2Sprite = new Sprite(game.player2.getKeyframe());
@@ -63,16 +78,52 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-        viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+        viewport = new StretchViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
 
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                System.out.println("GameScreen wurde angeklickt.");
-                return true;
+        pauseStage = new Stage(viewport, spriteBatch);
+        // Ensure you have uiskin.atlas and uiskin.json in assets
+        skinAtlas = new TextureAtlas(Gdx.files.internal("craftacular-ui.atlas"));        // CHANGED: load atlas
+        skin = new Skin(Gdx.files.internal("craftacular-ui.json"), skinAtlas);          // CHANGED: pass atlas to skin
+
+        Table table = new Table();
+        table.setFillParent(true);
+        TextButton resumeButton = new TextButton("Resume", skin);
+        TextButton mainMenuButton = new TextButton("Main Menu", skin);
+        TextButton exitButton = new TextButton("Exit Game", skin);
+        table.add(resumeButton).pad(10).row();
+        table.add(mainMenuButton).pad(10).row();
+        table.add(exitButton).pad(10);
+        pauseStage.addActor(table);
+
+        // CHANGED: Button listeners
+        resumeButton.addListener(new ClickListener() {
+            @Override public void clicked(InputEvent event, float x, float y) {
+                isPaused = false;                             // unpause on resume
             }
         });
+        mainMenuButton.addListener(new ClickListener() {
+            @Override public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));      // switch to MainMenu
+            }
+        });
+        exitButton.addListener(new ClickListener() {
+            @Override public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();                               // exit application
+            }
+        });
+
+        // CHANGED: InputMultiplexer to handle game and pauseStage
+        InputMultiplexer im = new InputMultiplexer(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    isPaused = !isPaused;
+                    return true;
+                }
+                return false;
+            }
+        }, pauseStage, new InputAdapter());
+        Gdx.input.setInputProcessor(im);
     }
 
     @Override
@@ -108,9 +159,6 @@ public class GameScreen implements Screen {
             game.player2.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.P))
             game.player2.punch();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            isPaused = !isPaused;
         if (Gdx.input.isKeyPressed(Input.Keys.G))
             toggleFullscreen();
     }
@@ -134,24 +182,33 @@ public class GameScreen implements Screen {
         viewport.apply();
         spriteBatch.begin();
         spriteBatch.draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        spriteBatch.draw(background, 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         player1Sprite.draw(spriteBatch);
         player2Sprite.draw(spriteBatch);
         spriteBatch.end();
+
+        if (isPaused) {
+            // CHANGED: Draw translucent overlay
+            ScreenUtils.clear(0f, 0f, 0f, 0.5f);
+            pauseStage.draw();
+        }
     }
 
     private void toggleFullscreen() {
         if (Gdx.graphics.isFullscreen()) {
-            Gdx.graphics.setWindowedMode(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-            camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-            camera.update();
-            viewport.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, true);
+
+            Gdx.graphics.setWindowedMode(1280, 720);
+            camera.setToOrtho(false, 1280, 720);
+            viewport.update(1280, 720, true);
+
         } else {
+
             DisplayMode displayMode = Gdx.graphics.getDisplayMode();
             Gdx.graphics.setFullscreenMode(displayMode);
-            camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-            camera.update();
+            camera.setToOrtho(false, 1280, 720);
             viewport.update(displayMode.width, displayMode.height, true);
         }
+        camera.update();
     }
 
     private void drawPauseMenu() {
@@ -163,7 +220,7 @@ public class GameScreen implements Screen {
 
         // Halbtransparentes Overlay
         spriteBatch.setColor(0, 0, 0, 0.5f);
-        spriteBatch.draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        spriteBatch.draw(background, 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         spriteBatch.setColor(1, 1, 1, 1); // Reset
 
         // Textanzeige
@@ -177,6 +234,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        pauseStage.getViewport().update(width, height, true); // CHANGED
     }
 
     @Override
@@ -197,5 +255,10 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         // Destroy screen's assets here.
+        spriteBatch.dispose();  // ADDED: dispose batch
+        background.dispose();
+        pauseStage.dispose();   // CHANGED: dispose stage
+        skin.dispose();
+        skinAtlas.dispose(); 
     }
 }
