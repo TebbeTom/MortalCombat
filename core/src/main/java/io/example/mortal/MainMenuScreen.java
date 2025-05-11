@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
+import io.example.mortal.Screens.GameScreen;
+
 public class MainMenuScreen implements Screen{
 
     private SpriteBatch batch;
@@ -48,7 +50,7 @@ public class MainMenuScreen implements Screen{
                 if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
 
                     System.out.println("Spiel starten!");
-                    game.switchScreen(new GameScreen());
+                    game.switchScreen(new GameScreen(game));
 
 
                 } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {

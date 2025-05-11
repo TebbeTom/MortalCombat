@@ -7,11 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
     public Vector2 position;
-	private Vector2 speed = new Vector2(100f, 200f);;
+	private Vector2 speed = new Vector2(500f, 0);;
     public float health;
 	public float maxHealth;
-	private float gravity = -20f;
-	private float width = 600f;
+	private float gravity = -40f;
+	private float width = 50f;
 
 	private boolean isMovingLeft = false;
 	private boolean isMovingRight = false;
@@ -20,14 +20,14 @@ public class Player {
 	private boolean isPunching = false;
 	private boolean isKicking = false;
 
-	public Animation<TextureRegion> animation;
+	private PlayerAnimations playerAnimations = new PlayerAnimations();
+	public Animation<TextureRegion> animation = playerAnimations.standardAnim;
 	public float currentAnimationTime = 0f;
 	public boolean isPunchDead = true;
 	public boolean isKickDead = true;
 
 
-    public Player(Vector2 startPosition, float health, Animation<TextureRegion> animation) {
-		this.animation = animation;
+    public Player(Vector2 startPosition, float health) {
         this.position = startPosition;
         this.health = health;
 		this.maxHealth = health;
@@ -42,17 +42,23 @@ public class Player {
 	}
 
 	public void update(float delta) {
-		position.x += (isMovingLeft ? 1 : 0) * speed.x * delta;
-		position.x -= (isMovingRight? 1 : 0) * speed.x * delta;
-		position.x = MathUtils.clamp(position.x, width/2, 500);
-
+		position.x -= (isMovingLeft ? 1 : 0) * speed.x * delta;
+		position.x += (isMovingRight? 1 : 0) * speed.x * delta;
+		
 		speed.y += gravity;
-		position.y += (isMovingLeft ? 1 : 0) * speed.y * delta;
-		position.y -= (isMovingRight? 1 : 0) * speed.y * delta;
+		position.y += speed.y * delta;
+		
 		isJumping = position.y > 0;
+		if(!isJumping)
+			speed.y = 0;
 
+		position.x = MathUtils.clamp(position.x, width/2, 500);
+		position.y = MathUtils.clamp(position.y, 0, 450);
+		
+		isMovingLeft = false;
+		isMovingRight = false;
 		if(isPunching)
-			handleActivePunch(delta);
+		handleActivePunch(delta);
 		if(isKicking)
 			handleActiveKick(delta);
 	}
@@ -60,7 +66,7 @@ public class Player {
     public void jump() {
 		if (isJumping)
 			return;
-		speed.y = 200f;
+		speed.y = 900f;
 		isJumping = true;
 	}
 
@@ -104,5 +110,9 @@ public class Player {
 			currentAnimationTime = 0f;
 			isKicking = false;
 			isKickDead = true;
+	}
+
+	public TextureRegion getKeyframe() {
+		return animation.getKeyFrame(currentAnimationTime, true);
 	}
 }

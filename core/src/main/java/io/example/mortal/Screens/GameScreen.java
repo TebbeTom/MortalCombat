@@ -4,11 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.InputAdapter;
+import io.example.mortal.Player;
+
+
+
+
+
 
 import io.example.mortal.Main;
 
@@ -17,20 +28,43 @@ public class GameScreen implements Screen {
     private Texture background;
     private SpriteBatch spriteBatch;
     private FitViewport viewport;
+    private OrthographicCamera camera;
+    private BitmapFont font;
+    
+    private final int VIRTUAL_WIDTH = 1280;
+    private final int VIRTUAL_HEIGHT = 720;
+
     private Main game;
     private Sprite player1Sprite;
     private Sprite player2Sprite;
 
+    private boolean isPaused = false;
+
     public GameScreen(Main game) {
         this.game = game;
-    }
+        game.player1 = new Player(new Vector2(100f, 0f), 100);
+        game.player2 = new Player(new Vector2(500f, 0f), 100);
+    } 
 
     @Override
     public void show() {
-        background = new Texture("theBackground.jpeg");
-        viewport = new FitViewport(900, 450); 
+        background = new Texture("TeahouseNight.png");
         spriteBatch = new SpriteBatch();
-        player1Sprite = new Sprite(new Texture(null))
+        player1Sprite = new Sprite(game.player1.getKeyframe());
+        
+        font = new BitmapFont();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                System.out.println("GameScreen wurde angeklickt.");
+                return true;
+            }
+        });
     }
 
     @Override
@@ -53,8 +87,6 @@ public class GameScreen implements Screen {
             game.player1.punch();
         if (Gdx.input.isKeyPressed(Input.Keys.F))
             game.player1.kick();
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            game.togglePause();
 
         if (Gdx.input.isKeyPressed(Input.Keys.O))
             game.player2.jump();
@@ -69,20 +101,68 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.F))
             game.player2.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.APOSTROPHE))
-            game.togglePause();
-        
+            isPaused = !isPaused;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.G))
+            toggleFullscreen();
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            drawPauseMenu();
     }
 
     private void logic(float delta) {
         game.player1.update(delta);
+        syncSprite(game.player1, player1Sprite);
         //game.player2.update(delta);
+    }
+
+    private void syncSprite(Player player, Sprite sprite) {
+        sprite.setX(player.position.x);
+        sprite.setY(player.position.y);
+        sprite.setOrigin(25f, 0f);
+        sprite.setScale(6f);
+
     }
 
     private void draw() {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.begin();
-        spriteBatch.draw(background, 0, 0, 900, 450);
+        spriteBatch.draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        player1Sprite.draw(spriteBatch);
+        spriteBatch.end();
+    }
+
+    private void toggleFullscreen() {
+        if (Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setWindowedMode(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+            camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+            camera.update();
+            viewport.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, true);
+        } else {
+            DisplayMode displayMode = Gdx.graphics.getDisplayMode();
+            Gdx.graphics.setFullscreenMode(displayMode);
+            camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+            camera.update();
+            viewport.update(displayMode.width, displayMode.height, true);
+        }
+    }
+
+    private void drawPauseMenu() {
+        ScreenUtils.clear(Color.DARK_GRAY); // Hintergrund abdunkeln
+        viewport.apply();
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+
+        // Halbtransparentes Overlay
+        spriteBatch.setColor(0, 0, 0, 0.5f);
+        spriteBatch.draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        spriteBatch.setColor(1, 1, 1, 1); // Reset
+
+        // Textanzeige
+        font.getData().setScale(2f);
+        font.draw(spriteBatch, "Pausemenü", 500, 400);
+        font.draw(spriteBatch, "Drücke ESC zum Fortsetzen", 420, 350);
 
         spriteBatch.end();
     }

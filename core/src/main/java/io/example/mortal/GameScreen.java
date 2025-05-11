@@ -20,7 +20,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
 
     private BitmapFont font;
-    private boolean paused = false;
+    private boolean isPaused = false;
 
     private final int VIRTUAL_WIDTH = 1280;
     private final int VIRTUAL_HEIGHT = 720;
@@ -48,7 +48,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         handleInput();
 
-        if (!paused) {
+        if (!isPaused) {
             drawGame();
         } else {
             drawPauseMenu();
@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
 
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            paused = !paused;
+            isPaused = !isPaused;
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
