@@ -13,7 +13,7 @@ public class PlayerAnimations {
 	
 	public PlayerAnimations() {
 		animationFrames = new TextureRegion[1];
-		animationFrames[0] = new TextureRegion(new Texture("Idle.png"), 75, 70, 50, 55);
+		animationFrames[0] = new TextureRegion(new Texture("Martial Hero/Sprites/Idle.png"), 75, 70, 50, 55);
 		standardAnim = new Animation<TextureRegion>(1f, animationFrames);
 	}
 }
