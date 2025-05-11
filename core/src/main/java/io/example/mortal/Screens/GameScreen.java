@@ -37,13 +37,14 @@ public class GameScreen implements Screen {
     private Main game;
     private Sprite player1Sprite;
     private Sprite player2Sprite;
+    private float playerScaleFactor = 6f;
 
     private boolean isPaused = false;
 
     public GameScreen(Main game) {
         this.game = game;
-        game.player1 = new Player(new Vector2(100f, 0f), 100);
-        game.player2 = new Player(new Vector2(500f, 0f), 100);
+        game.player1 = new Player(new Vector2(100f, 0f), 100, playerScaleFactor);
+        game.player2 = new Player(new Vector2(500f, 0f), 100, playerScaleFactor);
     } 
 
     @Override
@@ -51,6 +52,7 @@ public class GameScreen implements Screen {
         background = new Texture("TeahouseNight.png");
         spriteBatch = new SpriteBatch();
         player1Sprite = new Sprite(game.player1.getKeyframe());
+        player2Sprite = new Sprite(game.player2.getKeyframe());
         
         font = new BitmapFont();
 
@@ -111,7 +113,9 @@ public class GameScreen implements Screen {
 
     private void logic(float delta) {
         game.player1.update(delta);
+        game.player2.update(delta);
         syncSprite(game.player1, player1Sprite);
+        syncSprite(game.player2, player2Sprite);
         //game.player2.update(delta);
     }
 
@@ -119,7 +123,7 @@ public class GameScreen implements Screen {
         sprite.setX(player.position.x);
         sprite.setY(player.position.y);
         sprite.setOrigin(25f, 0f);
-        sprite.setScale(6f);
+        sprite.setScale(playerScaleFactor);
 
     }
 
@@ -129,6 +133,7 @@ public class GameScreen implements Screen {
         spriteBatch.begin();
         spriteBatch.draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
         player1Sprite.draw(spriteBatch);
+        player2Sprite.draw(spriteBatch);
         spriteBatch.end();
     }
 

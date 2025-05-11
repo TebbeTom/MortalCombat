@@ -11,7 +11,7 @@ public class Player {
     public float health;
 	public float maxHealth;
 	private float gravity = -40f;
-	private float width = 50f;
+	private float width;
 
 	private boolean isMovingLeft = false;
 	private boolean isMovingRight = false;
@@ -27,10 +27,11 @@ public class Player {
 	public boolean isKickDead = true;
 
 
-    public Player(Vector2 startPosition, float health) {
+    public Player(Vector2 startPosition, float health, float scaleFactor) {
         this.position = startPosition;
         this.health = health;
 		this.maxHealth = health;
+		this.width = 50f * scaleFactor;
     }
 
 	public void setMovingLeft(boolean value) {
@@ -52,7 +53,7 @@ public class Player {
 		if(!isJumping)
 			speed.y = 0;
 
-		position.x = MathUtils.clamp(position.x, width/2, 500);
+		position.x = MathUtils.clamp(position.x, width/2, 900);
 		position.y = MathUtils.clamp(position.y, 0, 450);
 		
 		isMovingLeft = false;
