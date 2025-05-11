@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
     public Vector2 position;
-	private Vector2 speed = new Vector2(500f, 0);;
+	private Vector2 speed = new Vector2(500f, 0);
     public float health;
 	public float maxHealth;
 	private float gravity = -40f;
@@ -59,7 +59,7 @@ public class Player {
 		isMovingLeft = false;
 		isMovingRight = false;
 		if(isPunching)
-		handleActivePunch(delta);
+			handleActivePunch(delta);
 		if(isKicking)
 			handleActiveKick(delta);
 	}
@@ -72,7 +72,8 @@ public class Player {
 	}
 
 	public void duck() {
-		isDucking = true;
+		if(!(isJumping || isKicking || isPunching))
+			isDucking = true;
 	}
 
 	public void punch() {
@@ -111,9 +112,11 @@ public class Player {
 			currentAnimationTime = 0f;
 			isKicking = false;
 			isKickDead = true;
+			animation = playerAnimations.standardAnim;
 	}
 
 	public TextureRegion getKeyframe() {
-		return animation.getKeyFrame(currentAnimationTime, true);
+		boolean isLooping = (animation == playerAnimations.standardAnim);
+		return animation.getKeyFrame(currentAnimationTime, isLooping);
 	}
 }

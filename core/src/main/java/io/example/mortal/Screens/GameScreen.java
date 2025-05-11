@@ -126,6 +126,7 @@ public class GameScreen implements Screen {
     private void syncSprite(Player player, Sprite sprite) {
         sprite.setX(player.position.x);
         sprite.setY(player.position.y);
+        sprite.setRegion(player.getKeyframe());
         sprite.setScale(playerScaleFactor);
     }
 
