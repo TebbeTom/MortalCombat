@@ -1,6 +1,10 @@
 package io.example.mortal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
 
 import io.example.mortal.Screens.GameScreen;
@@ -10,12 +14,28 @@ public class Main extends Game {
     public Player player1 = new Player(new Vector2(100f, 0f), 100);
     public Player player2 = new Player(new Vector2(500f, 0f), 100);
 
+    
+    Map<String, Integer> resolution;
+
     @Override
     public void create() {
-        setScreen(new GameScreen(this));
+        resolution = new HashMap<>();
+        resolution.put("width", 1280);
+        resolution.put("height", 720);
+    
+
+        setScreen(new MainMenuScreen(this));
     }
 
-    public void togglePause() {
-        //setScreen(new PauseScreen(this));
+    public Map<String, Integer> getResolution() {
+        return resolution;
     }
+
+    public void switchScreen(Screen newer){
+        Screen oldScreen = getScreen();     
+        setScreen(newer);
+        if (oldScreen != null) oldScreen.dispose();
+    }
+
+    
 }
