@@ -1,10 +1,10 @@
 package io.example.mortal;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import io.example.mortal.Screens.MainMenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -13,20 +13,17 @@ public class Main extends Game {
     public Player player2;
 
     
-    Map<String, Integer> resolution;
+
+    public String selectedMap = "RampartSnow";
+    public String player1Char = "Ninja";
+    public String player2Char = "Robot";
+    public SpriteBatch batch;
 
     @Override
     public void create() {
-        resolution = new HashMap<>();
-        resolution.put("width", 1280);
-        resolution.put("height", 720);
-    
-
+        batch = new SpriteBatch();
+        SaveLoadManager.load(this);
         setScreen(new MainMenuScreen(this));
-    }
-
-    public Map<String, Integer> getResolution() {
-        return resolution;
     }
 
     public void switchScreen(Screen newer){
