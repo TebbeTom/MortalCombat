@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -60,8 +61,10 @@ public class MainMenuScreen implements Screen{
         Table table = new Table();
         table.setFillParent(true);
         TextButton startButton = new TextButton("START", skin);
+        TextButton optionsButton = new TextButton("Options", skin);
         TextButton exitButton  = new TextButton("EXIT", skin);
         table.add(startButton).pad(20).row();
+        table.add(optionsButton).pad(10).row();
         table.add(exitButton).pad(20);
         stage.addActor(table);
 
@@ -83,6 +86,14 @@ public class MainMenuScreen implements Screen{
                 game.switchScreen(new MapSelectScreen(game));
             }
         });
+
+        optionsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.switchScreen(new OptionScreen(game)); // Zum Optionsbildschirm wechseln
+            }
+        });
+
         exitButton.addListener(new ClickListener() {
             @Override public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 Gdx.app.exit();
@@ -123,10 +134,8 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void dispose() {
-        batch.dispose();
-        font.dispose();
-        stage.dispose();  // CHANGED: dispose stage
-        skin.dispose();   // CHANGED: dispose skin
-        atlas.dispose();  // CHANGED: dispose atlas
+        if (stage != null) stage.dispose();
+        if (skin != null) skin.dispose();
+        if (atlas != null) atlas.dispose();
     }
 }

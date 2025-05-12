@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+
+import io.example.mortal.GameMap;
 import io.example.mortal.Main;
 
 /**
@@ -22,7 +24,8 @@ public class MapSelectScreen implements Screen {
     private Skin skin;
     private OrthographicCamera camera;
     private StretchViewport viewport;
-    private final String[] maps = {"RampartSnow", "LanternFest", "TeahouseNight", "WuShiNight"};
+
+    private final GameMap[] maps = GameMap.values();
 
     public MapSelectScreen(Main game) {
         this.game = game;
@@ -45,19 +48,18 @@ public class MapSelectScreen implements Screen {
         table.setFillParent(true);
 
         // Buttons für jede Map
-        for (final String map : maps) {
-            TextButton btn = new TextButton(map, skin);
+        for (final GameMap map : maps) {
+            TextButton btn = new TextButton(map.displayName, skin);
             btn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    // Map-Auswahl speichern
                     game.selectedMap = map;
-                    // Neues Spiel starten
                     game.switchScreen(new GameScreen(game));
                 }
-            });
-            table.add(btn).pad(15).row();
-        }
+        });
+    table.add(btn).pad(15).row();
+}
+
 
         // Zurück zum Hauptmenü
         TextButton backBtn = new TextButton("Back", skin);

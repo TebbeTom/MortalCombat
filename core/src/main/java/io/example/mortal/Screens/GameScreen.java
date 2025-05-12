@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
     
     @Override
     public void show() {
+        game.stopMusic();
 
         camera = new OrthographicCamera();
         camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
@@ -65,7 +66,7 @@ public class GameScreen implements Screen {
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         spriteBatch = new SpriteBatch();
 
-        background = new Texture(game.selectedMap + ".png");
+        background = new Texture(game.selectedMap.texturePath);
         
         player1Sprite = new Sprite(game.player1.getKeyframe());
         player2Sprite = new Sprite(game.player2.getKeyframe());
