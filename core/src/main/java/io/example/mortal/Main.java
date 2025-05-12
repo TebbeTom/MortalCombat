@@ -12,8 +12,6 @@ public class Main extends Game {
     public Player player1;
     public Player player2;
 
-    
-
     public String selectedMap = "RampartSnow";
     public String player1Char = "Ninja";
     public String player2Char = "Robot";
