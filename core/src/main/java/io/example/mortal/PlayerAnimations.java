@@ -1,30 +1,67 @@
 package io.example.mortal;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class PlayerAnimations {
 
-    public Animation<TextureRegion> idleAnim;
-    public Animation<TextureRegion> runAnim;
-    public Animation<TextureRegion> attackAnim;
-    public Animation<TextureRegion> hurtAnim;
-
-    public PlayerAnimations() {
-        idleAnim = loadAnimation("Spieler/Martial Hero/Idle/MartialHeroIdle", 8, 0.1f);
-        runAnim = loadAnimation("Spieler/Martial Hero/Run/MartialHeroRun", 8, 0.1f);
-        attackAnim = loadAnimation("Spieler/Martial Hero/Attack/MartialHeroAttack", 6, 0.08f);
-        hurtAnim = loadAnimation("Spieler/Martial Hero/Hurt/MartialHeroHurt", 4, 0.12f);
+    public enum CharacterType {
+        MARTIAL_HERO, SAMURAI
     }
 
-    private Animation<TextureRegion> loadAnimation(String basePath, int frameCount, float frameDuration) {
+    public enum AnimationType {
+        IDLE, RUN, ATTACK, HURT
+    }
+
+    private final HashMap<CharacterType, HashMap<AnimationType, Animation<TextureRegion>>> animations;
+
+    public PlayerAnimations() {
+        animations = new HashMap<>();
+
+        // Martial Hero hat 8, 8, 6, 4 Frames
+        animations.put(CharacterType.MARTIAL_HERO, loadAnimations(
+                "Martial Hero", "MartialHero", 
+                8, 8, 6, 4
+        ));
+
+        // Samurai hat 10, 16, 8, 4 Frames
+        animations.put(CharacterType.SAMURAI, loadAnimations(
+                "Samurai", "Samurai", 
+                10, 16, 8, 4
+        ));
+    }
+
+    private HashMap<AnimationType, Animation<TextureRegion>> loadAnimations(
+            String folderName,
+            String filePrefix,
+            int idleCount,
+            int runCount,
+            int attackCount,
+            int hurtCount
+    ) {
+        HashMap<AnimationType, Animation<TextureRegion>> animMap = new HashMap<>();
+
+        animMap.put(AnimationType.IDLE, loadAnimation("Spieler/" + folderName + "/Idle/", filePrefix + "Idle", idleCount));
+        animMap.put(AnimationType.RUN, loadAnimation("Spieler/" + folderName + "/Run/", filePrefix + "Run", runCount));
+        animMap.put(AnimationType.ATTACK, loadAnimation("Spieler/" + folderName + "/Attack/", filePrefix + "Attack", attackCount));
+        animMap.put(AnimationType.HURT, loadAnimation("Spieler/" + folderName + "/Hurt/", filePrefix + "Hurt", hurtCount));
+
+        return animMap;
+    }
+
+    private Animation<TextureRegion> loadAnimation(String path, String prefix, int frameCount) {
         TextureRegion[] frames = new TextureRegion[frameCount];
         for (int i = 0; i < frameCount; i++) {
-            String filePath = String.format("%s%03d.png", basePath, i);
-            Texture texture = new Texture(filePath);
-            frames[i] = new TextureRegion(texture);
+            String filename = path + String.format("%s%03d.png", prefix, i);
+            frames[i] = new TextureRegion(new Texture(filename));
         }
-        return new Animation<>(frameDuration, frames);
+        return new Animation<>(0.1f, frames);
+    }
+
+    public Animation<TextureRegion> getAnimation(CharacterType type, AnimationType animType) {
+        return animations.get(type).get(animType);
     }
 }
