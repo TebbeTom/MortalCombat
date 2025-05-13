@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,9 +16,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import io.example.mortal.GameEnum;
 import io.example.mortal.Main;
 
-/**
- * Screen zur Auswahl der Map vor Spielstart.
- */
 public class MapSelectScreen implements Screen {
     private final Main game;
     private Stage stage;
@@ -44,10 +42,16 @@ public class MapSelectScreen implements Screen {
                 Gdx.files.internal("craftacular-ui.atlas"))
         );
 
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("font");
+        Label mapLabel = new Label("Choose a Map", labelStyle);
+
         Table table = new Table();
         table.setFillParent(true);
 
-        // Buttons für jede Map
+        table.add(mapLabel).padBottom(20).row();
+
+
         for (final GameEnum map : maps) {
             TextButton btn = new TextButton(map.displayName, skin);
             btn.addListener(new ClickListener() {
@@ -55,14 +59,13 @@ public class MapSelectScreen implements Screen {
                 public void clicked(InputEvent event, float x, float y) {
                     game.playClickEffect();
                     game.selectedMap = map;
-                    game.switchScreen(new GameScreen(game));
+                    game.switchScreen(new NameSelectScreen(game));
                 }
-        });
-    table.add(btn).pad(15).row();
-}
+            });
+            table.add(btn).pad(15).row();
+        }
 
 
-        // Zurück zum Hauptmenü
         TextButton backBtn = new TextButton("Back", skin);
         backBtn.addListener(new ClickListener() {
             @Override

@@ -7,6 +7,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -230,6 +232,16 @@ public class GameScreen implements Screen {
         spriteBatch.draw(background, 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         player1Sprite.draw(spriteBatch);
         player2Sprite.draw(spriteBatch);
+
+        BitmapFont uiFont = skin.getFont("font");
+        GlyphLayout layout = new GlyphLayout();
+        
+        uiFont.draw(spriteBatch, game.player1Char, 20, VIRTUAL_HEIGHT - 20);
+
+        layout.setText(uiFont, game.player2Char);
+        float name2Width = layout.width;
+        uiFont.draw(spriteBatch, game.player2Char,VIRTUAL_WIDTH - name2Width - 20,VIRTUAL_HEIGHT - 20);
+    
         spriteBatch.end();
 
         if (isPaused) {

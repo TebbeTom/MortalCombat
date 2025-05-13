@@ -1,3 +1,6 @@
+//Diese Klasse wird nicht benutzt, wäre aber ein Te
+
+/* 
 package io.example.mortal.Screens;
 
 import com.badlogic.gdx.Gdx;
@@ -68,3 +71,4 @@ public class CharacterSelectScreen implements Screen {
     @Override public void hide() { dispose(); }
     @Override public void dispose() { stage.dispose(); skin.dispose(); }
 }
+    */
