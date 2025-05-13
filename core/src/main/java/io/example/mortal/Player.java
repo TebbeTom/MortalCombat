@@ -10,26 +10,32 @@ import io.example.mortal.PlayerAnimations.CharacterType;
 public class Player {
     public Vector2 position;
 	private Vector2 speed = new Vector2(500f, 0);
-    public float health;
+    public int health;
 	public float maxHealth;
 	private float gravity = -40f;
 	private float width;
+	public float range = 40f;
+	public int strength = 10;
+	private float startHitTime = 0.3f;
+	private float endHitTime = 0.8f;
+	public boolean isAnimInHitZone = false;
 
 	private boolean isMovingLeft = false;
+	private boolean wasMovingLeft = false;
 	private boolean isMovingRight = false;
 	private boolean isJumping = false;
 	private boolean isDucking = false;
 	private boolean isPunching = false;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
-	public CharacterType characterType = CharacterType.SAMURAI;
-	private AnimationType animType = AnimationType.IDLE;
+	public CharacterType characterType = CharacterType.MARTIAL_HERO;
+	public AnimationType animType = AnimationType.IDLE;
 	public Animation<TextureRegion> animation = playerAnimations.getAnimation(characterType, animType);
 	public float currentAnimationTime = 0f;
 	public boolean isPunchDead = true;
 
 
-    public Player(Vector2 startPosition, float health, float scaleFactor) {
+    public Player(Vector2 startPosition, int health, float scaleFactor) {
         this.position = startPosition;
         this.health = health;
 		this.maxHealth = health;
@@ -42,6 +48,10 @@ public class Player {
 		if (animType != AnimationType.RUN)
 			changeAnim(AnimationType.RUN);
 		isMovingLeft = value;
+	}
+
+	public boolean getWasMovingLeft() {
+		return wasMovingLeft;
 	}
 
 	public void setMovingRight(boolean value) {
@@ -70,6 +80,7 @@ public class Player {
 		if (isIdle() && animType != AnimationType.IDLE) { // ^ == XOR
 			changeAnim(AnimationType.IDLE);
 		}
+		wasMovingLeft = isMovingLeft;
 		isMovingLeft = false;
 		isMovingRight = false;
 		if(isPunching)
@@ -106,13 +117,17 @@ public class Player {
 	}
 
 	public void damage(int amount) {
-		if(isDucking)
-		health -= amount;
+		if(!isDucking)
+			health -= amount;
 		if (health < 0)
 			health = 0;
 	}
 
 	private void handleActivePunch(float delta) {
+		if (currentAnimationTime > startHitTime && currentAnimationTime < endHitTime)
+			isAnimInHitZone = true;
+		else
+			isAnimInHitZone = false;
 		if(animation.isAnimationFinished(currentAnimationTime)){
 			changeAnim(AnimationType.IDLE);
 			isPunching = false;

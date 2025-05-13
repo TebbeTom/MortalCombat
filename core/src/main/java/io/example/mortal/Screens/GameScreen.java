@@ -26,6 +26,7 @@ import com.badlogic.gdx.InputProcessor;
 
 import io.example.mortal.Player;
 import io.example.mortal.SaveLoadManager;
+import io.example.mortal.PlayerAnimations.AnimationType;
 import io.example.mortal.Main;
 
 /** First screen of the application. Displayed after the application is created. */
@@ -46,6 +47,9 @@ public class GameScreen implements Screen {
     private Sprite player1Sprite;
     private Sprite player2Sprite;
     private float playerScaleFactor = 6f;
+
+    private int debugHpP1 = 100;
+    private int debugHpP2 = 100;
 
     private boolean isPaused = false;
 
@@ -163,6 +167,13 @@ public class GameScreen implements Screen {
             logic(delta);
         }
         draw();
+        //todo: remove following
+        if (game.player1.health != debugHpP1 || game.player2.health != debugHpP2){
+            debugHpP1 = game.player1.health;
+            debugHpP2 = game.player2.health;
+            System.out.println(String.format("1: %d\n2: %d", debugHpP1, debugHpP2) );
+
+        }
     }
 
     private void input() {
@@ -192,15 +203,36 @@ public class GameScreen implements Screen {
     private void logic(float delta) {
         game.player1.update(delta);
         game.player2.update(delta);
+        dealDamageIfNeeded(game.player1, game.player2);
         syncSprite(game.player1, player1Sprite);
         syncSprite(game.player2, player2Sprite);
         //game.player2.update(delta);
     }
 
+    private void dealDamageIfNeeded(Player p1, Player p2) {
+        if (p1.range < (Math.abs(p1.position.x - p2.position.x)))
+            if (!p1.isPunchDead &&
+            p1.isAnimInHitZone){
+                p2.damage(p1.strength);
+                p1.isPunchDead = true;
+            }
+        if (p2.range < (Math.abs(p2.position.x - p1.position.x)))
+            if (!p2.isPunchDead && p2.isAnimInHitZone){
+                p1.damage(p2.strength);
+                p2.isPunchDead = true;
+            }
+    }
+
     private void syncSprite(Player player, Sprite sprite) {
+        float otherPlayerX = player.position.x == game.player1.position.x ? game.player2.position.x : game.player1.position.x;
         sprite.setX(player.position.x);
         sprite.setY(player.position.y);
         sprite.setRegion(player.getKeyframe());
+        if (player.animType == AnimationType.RUN){
+            if (player.getWasMovingLeft())
+                sprite.setFlip(true, false);
+        } else
+            sprite.setFlip(otherPlayerX < player.position.x, false);
         sprite.setScale(playerScaleFactor);
     }
 

@@ -1,1 +1,1 @@
-LANTERN_FEST;Ninja;Robot;0.5
+LANTERN_FEST;Ninja;Robot;0.01
