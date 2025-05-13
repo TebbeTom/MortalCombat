@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,7 +16,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.mortal.Main;
@@ -36,6 +39,10 @@ public class MainMenuScreen implements Screen{
 
     private Main game;
 
+    private Array<Texture> videoFrames;
+    private float frameTime;
+    private int currentFrameIndex;
+
     public MainMenuScreen(Main game){
         this.game = game;
     }
@@ -55,11 +62,23 @@ public class MainMenuScreen implements Screen{
         atlas = new TextureAtlas(Gdx.files.internal("craftacular-ui.atlas"));
         skin  = new Skin(Gdx.files.internal("craftacular-ui.json"), atlas);
 
+        videoFrames = new Array<Texture>();
+        loadVideoFrames();
+
         Table table = new Table();
         table.setFillParent(true);
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("title");
+
+        Label headerLabel = new Label("Sterblicher Kampf", labelStyle);
+        table.add(headerLabel).pad(20).padBottom(50).row();
+
         TextButton startButton = new TextButton("START", skin);
         TextButton optionsButton = new TextButton("Options", skin);
         TextButton exitButton  = new TextButton("EXIT", skin);
+
+
         table.add(startButton).pad(20).row();
         table.add(optionsButton).pad(10).row();
         table.add(exitButton).pad(20);
@@ -102,6 +121,14 @@ public class MainMenuScreen implements Screen{
         
     }
 
+    // Lade alle Frames des Videos in ein Array
+    private void loadVideoFrames() {
+        for (int i = 1; i <= 50; i++) {  // Angenommen, du hast 30 Frames im Ordner 'Fish'
+            String framePath = "Fish/" + i + ".png";  // Frames sollten als frame1.png, frame2.png, ... benannt sein
+            videoFrames.add(new Texture(Gdx.files.internal(framePath)));
+        }
+    }
+
     @Override
     public void render(float delta) {
 
@@ -110,6 +137,20 @@ public class MainMenuScreen implements Screen{
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+
+        // Abspielen des "Videos" aus den Frames
+        frameTime += delta;
+        if (frameTime >= 0.1f) { // 10 FPS für das Video (jede 0.1 Sekunden ein neuer Frame)
+            currentFrameIndex = (currentFrameIndex + 1) % videoFrames.size; // Schleife durch die Frames
+            frameTime = 0;
+        }
+
+        // Zeichne den aktuellen Frame des "Videos"
+        batch.begin();
+        batch.setColor(1f, 1f, 1f, 0.8f);  // Setze den Alpha-Wert auf 0.7 (dunkel, aber noch sichtbar)
+        batch.draw(videoFrames.get(currentFrameIndex), 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        batch.end();
+
         stage.act(delta);
         stage.draw();
     }
@@ -137,5 +178,8 @@ public class MainMenuScreen implements Screen{
         if (stage != null) stage.dispose();
         if (skin != null) skin.dispose();
         if (atlas != null) atlas.dispose();
+        for (Texture frame : videoFrames) {
+            frame.dispose(); // Entsorge alle Texturen, wenn sie nicht mehr benötigt werden
+        }
     }
 }
