@@ -27,6 +27,7 @@ import com.badlogic.gdx.InputProcessor;
 import io.example.mortal.Player;
 import io.example.mortal.SaveLoadManager;
 import io.example.mortal.PlayerAnimations.AnimationType;
+import io.example.mortal.PlayerAnimations.CharacterType;
 import io.example.mortal.Main;
 
 /** First screen of the application. Displayed after the application is created. */
@@ -55,8 +56,8 @@ public class GameScreen implements Screen {
 
     public GameScreen(Main game) {
         this.game = game;
-        game.player1 = new Player(new Vector2(100f, -280f), 100, playerScaleFactor);
-        game.player2 = new Player(new Vector2(500f, -280f), 100, playerScaleFactor);
+        game.player1 = new Player(new Vector2(100f, -280f), CharacterType.FIGHTER_MAN, 100, playerScaleFactor);
+        game.player2 = new Player(new Vector2(500f, -280f), CharacterType.MARTIAL_HERO, 100, playerScaleFactor);
     } 
     
     @Override

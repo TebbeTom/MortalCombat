@@ -24,13 +24,13 @@ public class PlayerAnimations {
         // Martial Hero hat 8, 8, 6, 4 Frames
         animations.put(CharacterType.MARTIAL_HERO, loadAnimations(
                 "MartialHero",
-                8, 8, 6, 4
+                8, 8, 6
         ));
 
         // Samurai hat 10, 16, 8, 4 Frames
         animations.put(CharacterType.FIGHTER_MAN, loadAnimations(
                 "FighterMan", 
-                4, 8, 4, 4
+                4, 8, 4
         ));
     }
 
@@ -38,8 +38,7 @@ public class PlayerAnimations {
             String folderName,
             int idleCount,
             int runCount,
-            int attackCount,
-            int hurtCount
+            int attackCount
     ) {
         HashMap<AnimationType, Animation<TextureRegion>> animMap = new HashMap<>();
 

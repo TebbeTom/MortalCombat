@@ -28,18 +28,21 @@ public class Player {
 	private boolean isPunching = false;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
-	public CharacterType characterType = CharacterType.FIGHTER_MAN;
+	public CharacterType characterType;
 	public AnimationType animType = AnimationType.IDLE;
-	public Animation<TextureRegion> animation = playerAnimations.getAnimation(characterType, animType);
+	public Animation<TextureRegion> animation;
 	public float currentAnimationTime = 0f;
 	public boolean isPunchDead = true;
 
 
-    public Player(Vector2 startPosition, int health, float scaleFactor) {
+    public Player(Vector2 startPosition, CharacterType characterType, int health, float scaleFactor) {
         this.position = startPosition;
+		this.characterType = characterType;
         this.health = health;
 		this.maxHealth = health;
 		this.width = 200f;
+
+		this.animation = playerAnimations.getAnimation(characterType, animType);
     }
 
 	public void setMovingLeft(boolean value) {
