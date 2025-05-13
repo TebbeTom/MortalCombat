@@ -24,7 +24,7 @@ public class PlayerAnimations {
         // Martial Hero hat 8, 8, 6, 4 Frames
         animations.put(CharacterType.MARTIAL_HERO, loadAnimations(
                 "MartialHero",
-                8, 8, 6
+                8, 8, 4
         ));
 
         // Samurai hat 10, 16, 8, 4 Frames
