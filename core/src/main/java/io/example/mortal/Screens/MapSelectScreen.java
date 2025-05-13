@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-import io.example.mortal.GameMap;
+import io.example.mortal.GameEnum;
 import io.example.mortal.Main;
 
 /**
@@ -25,7 +25,7 @@ public class MapSelectScreen implements Screen {
     private OrthographicCamera camera;
     private StretchViewport viewport;
 
-    private final GameMap[] maps = GameMap.values();
+    private final GameEnum[] maps = GameEnum.values();
 
     public MapSelectScreen(Main game) {
         this.game = game;
@@ -48,11 +48,12 @@ public class MapSelectScreen implements Screen {
         table.setFillParent(true);
 
         // Buttons für jede Map
-        for (final GameMap map : maps) {
+        for (final GameEnum map : maps) {
             TextButton btn = new TextButton(map.displayName, skin);
             btn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    game.playClickEffect();
                     game.selectedMap = map;
                     game.switchScreen(new GameScreen(game));
                 }
@@ -66,6 +67,7 @@ public class MapSelectScreen implements Screen {
         backBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.playClickEffect();
                 game.switchScreen(new io.example.mortal.Screens.MainMenuScreen(game));
             }
         });

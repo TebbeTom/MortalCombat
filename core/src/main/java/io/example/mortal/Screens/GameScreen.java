@@ -3,9 +3,9 @@ package io.example.mortal.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,15 +49,28 @@ public class GameScreen implements Screen {
 
     private boolean isPaused = false;
 
+    private Music mapMusic;
+
+
     public GameScreen(Main game) {
         this.game = game;
         game.player1 = new Player(new Vector2(100f, 0f), 100, playerScaleFactor);
         game.player2 = new Player(new Vector2(500f, 0f), 100, playerScaleFactor);
+
+        game.stopMenuMusic();  // Stoppt die Menümusik, wenn der GameScreen gestartet wird
     } 
     
     @Override
     public void show() {
-        game.stopMusic();
+
+        if (mapMusic != null && mapMusic.isPlaying()) {
+            mapMusic.stop();
+        }
+
+        mapMusic = Gdx.audio.newMusic(Gdx.files.internal(game.selectedMap.musicFile));
+        mapMusic.setLooping(true);
+        mapMusic.setVolume(game.centralVolume);
+        mapMusic.play();
 
         camera = new OrthographicCamera();
         camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
@@ -86,7 +99,8 @@ public class GameScreen implements Screen {
         resumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (!isPaused) return; // nur wenn pausiert
+                if (!isPaused) return;
+                game.playClickEffect();
                 isPaused = false;
                 Gdx.input.setInputProcessor(defaultProcessor());
             }
@@ -98,8 +112,10 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (!isPaused) return;
+                game.playClickEffect();
                 isPaused = false;
                 SaveLoadManager.save(game);
+                game.startMenuMusic();
                 Gdx.graphics.setWindowedMode(1280, 720);
                 game.switchScreen(new MainMenuScreen(game));
             }
@@ -111,16 +127,16 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (!isPaused) return;
-                Gdx.app.exit();
+                    game.playClickEffect();
+                    isPaused = false;
+                    Gdx.app.exit();
             }
         });
         table.add(exitButton).pad(10);
         pauseStage.addActor(table);
 
-        // Setze Standard-InputProcessor fürs Spiel
         Gdx.input.setInputProcessor(defaultProcessor());
 
-        // CHANGED: InputMultiplexer to handle game and pauseStage
         InputMultiplexer im = new InputMultiplexer(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
@@ -198,7 +214,6 @@ public class GameScreen implements Screen {
         game.player2.update(delta);
         syncSprite(game.player1, player1Sprite);
         syncSprite(game.player2, player2Sprite);
-        //game.player2.update(delta);
     }
 
     private void syncSprite(Player player, Sprite sprite) {
@@ -218,8 +233,7 @@ public class GameScreen implements Screen {
         spriteBatch.end();
 
         if (isPaused) {
-            // CHANGED: Draw translucent overlay
-            ScreenUtils.clear(0f, 0f, 0f, 0.5f);
+            ScreenUtils.clear(0f, 0f, 0f, 0.7f);
             pauseStage.draw();
         }
     }
@@ -233,16 +247,19 @@ public class GameScreen implements Screen {
     @Override
     public void pause() {
         // Invoked when your application is paused.
+        mapMusic.pause();
     }
 
     @Override
     public void resume() {
         // Invoked when your application is resumed after pause.
+        mapMusic.play();
     }
 
     @Override
     public void hide() {
         // This method is called when another screen replaces this one.
+        mapMusic.stop();
     }
 
     @Override
@@ -253,6 +270,7 @@ public class GameScreen implements Screen {
         background.dispose();
         pauseStage.dispose();
         skin.dispose();
-        skinAtlas.dispose(); 
+        skinAtlas.dispose();
+        mapMusic.dispose(); 
     }
 }

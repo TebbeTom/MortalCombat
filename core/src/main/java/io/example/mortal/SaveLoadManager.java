@@ -22,9 +22,9 @@ public class SaveLoadManager {
 
         if (parts.length >= 3) {
             try {
-                game.selectedMap = GameMap.valueOf(parts[0]); // ✅ String → Enum
+                game.selectedMap = GameEnum.valueOf(parts[0]); // ✅ String → Enum
             } catch (IllegalArgumentException e) {
-                game.selectedMap = GameMap.RAMPART_SNOW; // Fallback
+                game.selectedMap = GameEnum.RAMPART_SNOW; // Fallback
             }
 
             game.player1Char = parts[1];
@@ -35,11 +35,11 @@ public class SaveLoadManager {
                 float volume = Float.parseFloat(parts[3]);
                 game.setMusicVolume(volume); // Setze die Lautstärke direkt
             } catch (NumberFormatException e) {
-                game.setMusicVolume(0.5f); // Fallback-Wert für Lautstärke, falls Parsing fehlschlägt
+                game.setMusicVolume(0.1f); // Fallback-Wert für Lautstärke, falls Parsing fehlschlägt
             }
         } else {
             // Falls keine Lautstärke gespeichert wurde, setze sie auf den Standardwert (0.5f)
-            game.setMusicVolume(0.5f);
+            game.setMusicVolume(0.1f);
         }
         
         }

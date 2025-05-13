@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -31,15 +32,19 @@ public class OptionScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("font");
+        Label volumeLabel = new Label("Change Volume", labelStyle);
+
         float initialVolume = (game.menuMusic != null) ? game.menuMusic.getVolume() : 0.5f;
-        volumeSlider = new Slider(0f, 1f, 0.01f, false, skin); // 0.0 bis 1.0 für Lautstärke
+        volumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
         volumeSlider.setValue(initialVolume);
 
         volumeSlider.addListener(event -> {
         if (event.getTarget() instanceof Slider) {
             float volume = ((Slider) event.getTarget()).getValue();
-            game.setMusicVolume(volume); // Lautstärke aktualisieren
-            SaveLoadManager.save(game);  // Lautstärke in die settings.txt speichern
+            game.setMusicVolume(volume);
+            SaveLoadManager.save(game);
         }
         return false;
         });
@@ -49,11 +54,13 @@ public class OptionScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.playClickEffect();
                 game.switchScreen(new MainMenuScreen(game)); // Zurück zum Hauptmenü
             }
         });
 
-        table.add(volumeSlider).pad(10).row();
+        table.add(volumeLabel).padBottom(20).row();
+        table.add(volumeSlider).width(backButton.getWidth()).pad(10).row();
         table.add(backButton).pad(10).row();
 
         stage.addActor(table);
@@ -75,7 +82,6 @@ public class OptionScreen implements Screen {
 
     @Override
     public void hide() {
-        Gdx.input.setInputProcessor(null);
     }
 
     @Override
@@ -90,13 +96,9 @@ public class OptionScreen implements Screen {
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'pause'");
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resume'");
     }
 }
