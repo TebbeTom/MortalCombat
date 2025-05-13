@@ -30,7 +30,7 @@ public class PlayerAnimations {
         // Samurai hat 10, 16, 8, 4 Frames
         animations.put(CharacterType.FIGHTER_MAN, loadAnimations(
                 "FighterMan", 
-                8, 8, 6, 4
+                4, 8, 4, 4
         ));
     }
 
