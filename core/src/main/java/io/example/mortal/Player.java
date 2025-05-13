@@ -28,7 +28,7 @@ public class Player {
 	private boolean isPunching = false;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
-	public CharacterType characterType = CharacterType.MARTIAL_HERO;
+	public CharacterType characterType = CharacterType.FIGHTER_MAN;
 	public AnimationType animType = AnimationType.IDLE;
 	public Animation<TextureRegion> animation = playerAnimations.getAnimation(characterType, animType);
 	public float currentAnimationTime = 0f;
@@ -39,7 +39,7 @@ public class Player {
         this.position = startPosition;
         this.health = health;
 		this.maxHealth = health;
-		this.width = 50f * scaleFactor;
+		this.width = 200f;
     }
 
 	public void setMovingLeft(boolean value) {
@@ -70,12 +70,12 @@ public class Player {
 		speed.y += gravity;
 		position.y += speed.y * delta;
 		
-		isJumping = position.y > 0;
+		isJumping = position.y > -290;
 		if(!isJumping)
 			speed.y = 0;
 
-		position.x = MathUtils.clamp(position.x, width/2, 900);
-		position.y = MathUtils.clamp(position.y, 0, 450);
+		position.x = MathUtils.clamp(position.x, -280, 650);
+		position.y = MathUtils.clamp(position.y, -290, 450);
 		
 		if (isIdle() && animType != AnimationType.IDLE) { // ^ == XOR
 			changeAnim(AnimationType.IDLE);
@@ -83,6 +83,7 @@ public class Player {
 		wasMovingLeft = isMovingLeft;
 		isMovingLeft = false;
 		isMovingRight = false;
+		isDucking = false;
 		if(isPunching)
 			handleActivePunch(delta);
 	}

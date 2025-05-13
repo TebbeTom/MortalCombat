@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
     private Main game;
     private Sprite player1Sprite;
     private Sprite player2Sprite;
-    private float playerScaleFactor = 6f;
+    private float playerScaleFactor = 4f;
 
     private int debugHpP1 = 100;
     private int debugHpP2 = 100;
@@ -55,8 +55,8 @@ public class GameScreen implements Screen {
 
     public GameScreen(Main game) {
         this.game = game;
-        game.player1 = new Player(new Vector2(100f, 0f), 100, playerScaleFactor);
-        game.player2 = new Player(new Vector2(500f, 0f), 100, playerScaleFactor);
+        game.player1 = new Player(new Vector2(100f, -280f), 100, playerScaleFactor);
+        game.player2 = new Player(new Vector2(500f, -280f), 100, playerScaleFactor);
     } 
     
     @Override
