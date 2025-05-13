@@ -43,6 +43,7 @@ public class Player {
 	}
 
 	public void update(float delta) {
+		currentAnimationTime += delta;
 		position.x -= (isMovingLeft ? 1 : 0) * speed.x * delta;
 		position.x += (isMovingRight? 1 : 0) * speed.x * delta;
 		
@@ -98,8 +99,8 @@ public class Player {
 	}
 
 	private void handleActivePunch(float delta) {
-		currentAnimationTime += delta;
 		if(animation.isAnimationFinished(currentAnimationTime)){
+			//set Standard/idle anim
 			currentAnimationTime = 0f;
 			isPunching = false;
 			isPunchDead = true;
@@ -107,9 +108,9 @@ public class Player {
 	}
 
 	private void handleActiveKick(float delta) {
-		currentAnimationTime += delta;
 		if(animation.isAnimationFinished(currentAnimationTime))
 			currentAnimationTime = 0f;
+			//set Standard/idle anim
 			isKicking = false;
 			isKickDead = true;
 			animation = playerAnimations.standardAnim;
