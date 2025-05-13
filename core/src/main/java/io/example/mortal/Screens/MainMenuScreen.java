@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -24,7 +23,6 @@ import io.example.mortal.Main;
 public class MainMenuScreen implements Screen{
 
     private SpriteBatch batch;
-    private BitmapFont font;
     private Stage stage;
     private Skin skin;
     private TextureAtlas atlas;
@@ -52,7 +50,6 @@ public class MainMenuScreen implements Screen{
         camera.update();
 
         batch = new SpriteBatch();
-        font = new BitmapFont();
         stage = new Stage(viewport, batch);
 
         atlas = new TextureAtlas(Gdx.files.internal("craftacular-ui.atlas"));
