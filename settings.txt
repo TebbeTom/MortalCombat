@@ -1,1 +1,1 @@
-LanternFest;Ninja;Robot
+LANTERN_FEST;Ninja;Robot;0.5

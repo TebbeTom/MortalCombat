@@ -170,8 +170,6 @@ public class GameScreen implements Screen {
             game.player1.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.A))
             game.player1.setMovingLeft(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.S))
-            game.player1.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             game.player1.setMovingRight(true);
         if (Gdx.input.isKeyPressed(Input.Keys.W))
@@ -187,8 +185,6 @@ public class GameScreen implements Screen {
             game.player2.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.M ))
             game.player2.duck();
-        if (Gdx.input.isKeyPressed(Input.Keys.SEMICOLON))
-            game.player2.kick();
         if (Gdx.input.isKeyPressed(Input.Keys.P))
             game.player2.punch();
     }

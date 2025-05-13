@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import io.example.mortal.PlayerAnimations.AnimationType;
+import io.example.mortal.PlayerAnimations.CharacterType;
 
 public class Player {
     public Vector2 position;
@@ -18,13 +20,13 @@ public class Player {
 	private boolean isJumping = false;
 	private boolean isDucking = false;
 	private boolean isPunching = false;
-	private boolean isKicking = false;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
-	public Animation<TextureRegion> animation = playerAnimations.standardAnim;
+	public CharacterType characterType = CharacterType.SAMURAI;
+	private AnimationType animType = AnimationType.IDLE;
+	public Animation<TextureRegion> animation = playerAnimations.getAnimation(characterType, animType);
 	public float currentAnimationTime = 0f;
 	public boolean isPunchDead = true;
-	public boolean isKickDead = true;
 
 
     public Player(Vector2 startPosition, float health, float scaleFactor) {
@@ -35,10 +37,18 @@ public class Player {
     }
 
 	public void setMovingLeft(boolean value) {
+		if (isPunching)
+			return;
+		if (animType != AnimationType.RUN)
+			changeAnim(AnimationType.RUN);
 		isMovingLeft = value;
 	}
 
 	public void setMovingRight(boolean value) {
+		if (isPunching)
+			return;
+		if (animType != AnimationType.RUN)
+			changeAnim(AnimationType.RUN);
 		isMovingRight = value;
 	}
 
@@ -57,12 +67,13 @@ public class Player {
 		position.x = MathUtils.clamp(position.x, width/2, 900);
 		position.y = MathUtils.clamp(position.y, 0, 450);
 		
+		if (isIdle() && animType != AnimationType.IDLE) { // ^ == XOR
+			changeAnim(AnimationType.IDLE);
+		}
 		isMovingLeft = false;
 		isMovingRight = false;
 		if(isPunching)
 			handleActivePunch(delta);
-		if(isKicking)
-			handleActiveKick(delta);
 	}
 
     public void jump() {
@@ -73,22 +84,25 @@ public class Player {
 	}
 
 	public void duck() {
-		if(!(isJumping || isKicking || isPunching))
+		if(!(isJumping || isPunching))
 			isDucking = true;
 	}
 
+	private boolean isIdle() {
+		if (
+			isDucking ||
+			(isMovingLeft ^ isMovingRight) ||
+			isPunching
+		){ return false;}
+		return true;
+	}
+
 	public void punch() {
-		if (isPunching || isKicking)
+		if (isPunching)
 			return;
 		isPunching = true;
 		isPunchDead = false;
-	}
-
-	public void kick() {
-		if (isKicking || isPunching)
-			return;
-		isKicking = true;
-		isKickDead = false;
+		changeAnim(AnimationType.ATTACK);
 	}
 
 	public void damage(int amount) {
@@ -100,24 +114,20 @@ public class Player {
 
 	private void handleActivePunch(float delta) {
 		if(animation.isAnimationFinished(currentAnimationTime)){
-			//set Standard/idle anim
-			currentAnimationTime = 0f;
+			changeAnim(AnimationType.IDLE);
 			isPunching = false;
 			isPunchDead = true;
 		}
 	}
 
-	private void handleActiveKick(float delta) {
-		if(animation.isAnimationFinished(currentAnimationTime))
-			currentAnimationTime = 0f;
-			//set Standard/idle anim
-			isKicking = false;
-			isKickDead = true;
-			animation = playerAnimations.standardAnim;
+	private void changeAnim(AnimationType animType) {
+		this.currentAnimationTime = 0f;
+		this.animType = animType;
+		this.animation = playerAnimations.getAnimation(characterType, animType);
 	}
 
 	public TextureRegion getKeyframe() {
-		boolean isLooping = (animation == playerAnimations.standardAnim);
+		boolean isLooping = (animType == AnimationType.IDLE || animType == AnimationType.RUN);
 		return animation.getKeyFrame(currentAnimationTime, isLooping);
 	}
 }
