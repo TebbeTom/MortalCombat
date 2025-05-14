@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -57,12 +58,17 @@ public class NameSelectScreen implements Screen {
         table.center();
         table.pad(20);
 
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("font");
+        Label nameLabel = new Label("Choose your name", labelStyle);
+
         // Felder nebeneinander
         name1Field = new TextField("", skin);
         name1Field.setMessageText("Player 1");
         name2Field = new TextField("", skin);
         name2Field.setMessageText("Player 2");
 
+        table.add(nameLabel).colspan(2).padTop(15).padBottom(30).row();
         table.add(name1Field).width(250).padRight(30);
         table.add(name2Field).width(250).row();
         table.row().padTop(30);
@@ -107,7 +113,7 @@ public class NameSelectScreen implements Screen {
 
             }
         });
-        table.add(confirmBtn).colspan(2).width(200).padTop(15).row();
+        table.add(confirmBtn).colspan(2).width(200).padTop(30).row();
 
         TextButton backBtn = new TextButton("Back", skin);
         backBtn.addListener(new ClickListener() {

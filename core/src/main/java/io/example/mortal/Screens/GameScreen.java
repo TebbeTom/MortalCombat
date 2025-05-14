@@ -253,8 +253,13 @@ public class GameScreen implements Screen {
 
             // KO_DURATION ist Fadedauer, 2 Sekunden extra Verzögerung vorher:
             if (koTimer >= 2f + KO_DURATION) {
-                game.switchScreen(new KOScreen(game));
-                return;
+                if(game.player1.health<=0){
+                    game.switchScreen(new KOScreen(game, game.player2Char));
+                    return;
+                }else{
+                    game.switchScreen(new KOScreen(game, game.player1Char));
+                    return;
+                }
             }
 }
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.mortal.Main;
+import io.example.mortal.Player;
 
 public class KOScreen implements Screen {
     private final Main game;
@@ -21,12 +22,14 @@ public class KOScreen implements Screen {
     private Skin skin;
     private OrthographicCamera camera;
     private StretchViewport viewport;
+    private String winner;
 
     private final int VIRTUAL_WIDTH = 1280;
     private final static int VIRTUAL_HEIGHT = 720;
 
-    public KOScreen(Main game) {
+    public KOScreen(Main game, String winner) {
         this.game = game;
+        this.winner = winner;
     }
 
     @Override
@@ -48,11 +51,15 @@ public class KOScreen implements Screen {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("font");
         Label koLabel = new Label("K.O.", labelStyle);
+        Label winnerLabel = new Label("The Winner is: " + winner, labelStyle);
+
 
         Table table = new Table();
         table.setFillParent(true);
 
         table.add(koLabel).padBottom(30).row();
+        table.add(winnerLabel).padBottom(30).row();
+
 
         TextButton restartButton = new TextButton("Restart Match", skin);
         restartButton.addListener(new ClickListener() {

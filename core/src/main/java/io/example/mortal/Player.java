@@ -15,7 +15,7 @@ public class Player {
     public int health;
 	public float maxHealth;
 	private float gravity = -40f;
-	public float range = 300f;
+	public float range = 325f;
 	public int strength = 10;
 	private float startHitTime = 0.3f;
 	private float endHitTime = 0.8f;
