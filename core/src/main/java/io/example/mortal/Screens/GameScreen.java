@@ -80,8 +80,8 @@ public class GameScreen implements Screen {
 
     public GameScreen(Main game) {
         this.game = game;
-        game.player1 = new Player(new Vector2(100f, -80f), CharacterType.FIGHTER_MAN, 100, playerScaleFactor);
-        game.player2 = new Player(new Vector2(500f, -80f), CharacterType.MARTIAL_HERO, 100, playerScaleFactor);
+        game.player1 = new Player(new Vector2(100f, -80f), CharacterType.FIGHTER_MAN, 100);
+        game.player2 = new Player(new Vector2(500f, -80f), CharacterType.MARTIAL_HERO, 100);
         
         game.stopMenuMusic();
     } 
