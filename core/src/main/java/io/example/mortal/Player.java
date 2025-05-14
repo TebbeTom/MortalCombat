@@ -32,6 +32,7 @@ public class Player {
 	public boolean isFinishedDying = false;
 	public boolean isDying = false;
 	public boolean isPunchDead = true;
+	private boolean wasIdel = false;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
 	public CharacterType characterType;
@@ -75,7 +76,7 @@ public class Player {
 		}
 
 	public void setMovingLeft(boolean value) {
-		if (isPunching)
+		if (isPunching || isTakingDamage)
 			return;
 		if (animType != AnimationType.RUN)
 			changeAnim(AnimationType.RUN);
@@ -83,7 +84,7 @@ public class Player {
 	}
 
 	public void setMovingRight(boolean value) {
-		if (isPunching)
+		if (isPunching || isTakingDamage)
 			return;
 		if (animType != AnimationType.RUN)
 			changeAnim(AnimationType.RUN);
@@ -125,6 +126,7 @@ public class Player {
 			changeAnim(AnimationType.IDLE);
 		}
 
+		wasIdel = isIdle();
 
 		wasMovingLeft = isMovingLeft;
 		if (!(isTakingDamage && isJumping)) {
@@ -151,7 +153,6 @@ public class Player {
 
 	private boolean isIdle() {
 		if (
-			isDucking ||
 			(isMovingLeft ^ isMovingRight) ||
 			isPunching ||
 			isDying || 
@@ -171,7 +172,9 @@ public class Player {
 	}
 
 	public void damage(int amount) {
-        if (isDying || wasDucking) return;
+        if (isDying || wasDucking || isTakingDamage) return;
+		if (wasIdel)
+			amount /= 5;
         health -= amount;
         if (health <= 0) {
             health = 0;
