@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-import io.example.mortal.GameEnum;
+import io.example.mortal.MapEnum;
 import io.example.mortal.Main;
 
 public class MapSelectScreen implements Screen {
@@ -23,7 +23,7 @@ public class MapSelectScreen implements Screen {
     private OrthographicCamera camera;
     private StretchViewport viewport;
 
-    private final GameEnum[] maps = GameEnum.values();
+    private final MapEnum[] maps = MapEnum.values();
 
     public MapSelectScreen(Main game) {
         this.game = game;
@@ -52,7 +52,7 @@ public class MapSelectScreen implements Screen {
         table.add(mapLabel).padBottom(20).row();
 
 
-        for (final GameEnum map : maps) {
+        for (final MapEnum map : maps) {
             TextButton btn = new TextButton(map.displayName, skin);
             btn.addListener(new ClickListener() {
                 @Override

@@ -15,7 +15,7 @@ public class Main extends Game {
     public Player player1;
     public Player player2;
 
-    public GameEnum selectedMap = GameEnum.RAMPART_SNOW;
+    public MapEnum selectedMap = MapEnum.RAMPART_SNOW;
     public String player1Char = "Ninja";
     public String player2Char = "Robot";
     public SpriteBatch batch;
@@ -30,8 +30,8 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
 
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu_music.mp3"));
-        clickEffect = Gdx.audio.newSound(Gdx.files.internal("clickEffect.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/backgroundMusic/menu_music.mp3"));
+        clickEffect = Gdx.audio.newSound(Gdx.files.internal("sounds/clickEffect.mp3"));
 
         menuMusic.setLooping(true);  // Menu Musik soll wiederholt werden
         

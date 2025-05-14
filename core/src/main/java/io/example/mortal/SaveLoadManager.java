@@ -22,9 +22,9 @@ public class SaveLoadManager {
 
         if (parts.length >= 3) {
             try {
-                game.selectedMap = GameEnum.valueOf(parts[0]); // ✅ String → Enum
+                game.selectedMap = MapEnum.valueOf(parts[0]); // ✅ String → Enum
             } catch (IllegalArgumentException e) {
-                game.selectedMap = GameEnum.RAMPART_SNOW; // Fallback
+                game.selectedMap = MapEnum.RAMPART_SNOW; // Fallback
             }
 
             game.player1Char = parts[1];
