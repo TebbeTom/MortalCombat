@@ -1,7 +1,7 @@
 // Datei: GameMap.java
 package io.example.mortal;
 
-public enum GameEnum {
+public enum MapEnum {
     RAMPART_SNOW("Rampart Snow", "backgrounds/RampartSnow.png", "sounds/backgroundMusic/RampartSnow.mp3"),
     LANTERN_FEST("Lantern Fest", "backgrounds/LanternFest.png","sounds/backgroundMusic/LanternFest.mp3"),
     TEAHOUSE_NIGHT("Teahouse Night", "backgrounds/TeahouseNight.png", "sounds/backgroundMusic/TeahouseNight.mp3"),
@@ -12,7 +12,7 @@ public enum GameEnum {
     public final String texturePath;
     public final String musicFile;
 
-    GameEnum(String displayName, String texturePath, String musicFile) {
+    MapEnum(String displayName, String texturePath, String musicFile) {
         this.displayName = displayName;
         this.texturePath = texturePath;
         this.musicFile = musicFile;

@@ -15,7 +15,7 @@ public class Main extends Game {
     public Player player1;
     public Player player2;
 
-    public GameEnum selectedMap = GameEnum.RAMPART_SNOW;
+    public MapEnum selectedMap = MapEnum.RAMPART_SNOW;
     public String player1Char = "Ninja";
     public String player2Char = "Robot";
     public SpriteBatch batch;

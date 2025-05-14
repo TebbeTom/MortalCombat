@@ -101,7 +101,7 @@ public class Player {
 
 	public void jump() {
 		if (isJumping || isTakingDamage) return;
-		speed.y = 900f;
+		speed.y = 1500f;
 		isJumping = true;
 		changeAnim(AnimationType.JUMP);
 		soundJump.play();
@@ -127,7 +127,7 @@ public class Player {
 	public void damage(int amount) {
 		if (isDying || wasDucking || isTakingDamage) return;
 
-		if (wasIdle) amount /= 5;
+		if (wasIdle) amount /= 2;
 		health -= amount;
 
 		if (health <= 0) {

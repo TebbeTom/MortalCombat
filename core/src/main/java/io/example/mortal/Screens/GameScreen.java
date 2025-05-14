@@ -41,19 +41,19 @@ public class GameScreen implements Screen {
     private static final float HEALTH_BAR_Y = VIRTUAL_HEIGHT - 100f;
     private static final float HEALTH_BAR_MARGIN = 20f;
     private static final float KO_DURATION = 2.5f;
-
+    
     // Colors for UI
     private static final Color HEALTH_BG_BORDER = Color.BLACK;
     private static final Color HEALTH_BG_FILL = new Color(0.2f, 0.2f, 0.2f, 1f);
     private static final Color HEALTH_P1_COLOR = new Color(1f, 0f, 0f, 0.8f);
     private static final Color HEALTH_P2_COLOR = new Color(0f, 1f, 0f, 0.8f);
-
+    
     // Game state and visuals
     private final Main game;
     private SpriteBatch spriteBatch;
     private OrthographicCamera camera;
     private StretchViewport viewport;
-
+    
     private Texture background;
     private Texture healthBarBackground, healthBarFill;
     private Sprite player1Sprite, player2Sprite;
@@ -64,7 +64,7 @@ public class GameScreen implements Screen {
     private TextureAtlas skinAtlas;
     private Music mapMusic;
     private BitmapFont koFont;
-
+    
     private boolean isPaused = true;
     private boolean isFirstFrame = true;
     private boolean isAllAlive = true;
@@ -73,7 +73,12 @@ public class GameScreen implements Screen {
     // Debugging
     private int debugHpP1 = 100;
     private int debugHpP2 = 100;
-
+    
+    /**
+     * Constructs the GameScreen with initialized players and stops the menu music.
+     *
+     * @param game The main game instance containing player and map data.
+     */
     public GameScreen(Main game) {
         this.game = game;
         this.game.player1 = new Player(new Vector2(100f, -80f), CharacterType.FIGHTER_MAN, 100);
@@ -81,11 +86,15 @@ public class GameScreen implements Screen {
         this.game.stopMenuMusic();
     }
 
+    /**
+     * Called when this screen becomes the current screen for a Game.
+     * Sets up rendering, camera, UI elements, input, and loads assets.
+     */
     @Override
     public void show() {
         setupCameraAndViewport();
         loadAssets();
-        setupPlayers();
+        setupPlayerSprites();
         createPauseMenu();
         setupInputHandling();
         configureKOFont();
@@ -115,6 +124,11 @@ public class GameScreen implements Screen {
         healthBarFill = create1x1Texture(Color.WHITE);
     }
 
+    /**
+     * Creates the background texture for the health bar using a Pixmap.
+     *
+     * @return The generated health bar background texture.
+     */
     private Texture createHealthBarBackground() {
         Pixmap pixmap = new Pixmap((int) HEALTH_BAR_WIDTH, (int) HEALTH_BAR_HEIGHT, Pixmap.Format.RGBA8888);
         pixmap.setColor(HEALTH_BG_BORDER);
@@ -126,6 +140,12 @@ public class GameScreen implements Screen {
         return tex;
     }
 
+    /**
+     * Creates a 1x1 texture with the specified color.
+     *
+     * @param color The color to fill the texture.
+     * @return The generated texture.
+     */
     private Texture create1x1Texture(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
@@ -135,7 +155,7 @@ public class GameScreen implements Screen {
         return tex;
     }
 
-    private void setupPlayers() {
+    private void setupPlayerSprites() {
         player1Sprite = createPlayerSprite(game.player1);
         player2Sprite = createPlayerSprite(game.player2);
     }
@@ -162,6 +182,13 @@ public class GameScreen implements Screen {
         pauseStage.addActor(table);
     }
 
+    /**
+     * Adds a button to the pause menu with a specified action.
+     *
+     * @param table   The table layout to add the button to.
+     * @param text    The label text of the button.
+     * @param onClick The action to execute when clicked.
+     */
     private void addPauseMenuButton(Table table, String text, Runnable onClick) {
         TextButton button = new TextButton(text, skin);
         button.addListener(new ClickListener() {
@@ -176,6 +203,9 @@ public class GameScreen implements Screen {
         table.add(button).pad(10).row();
     }
 
+    /**
+     * Resumes gameplay by resetting the input processor.
+     */
     private void resumeGame() {
         Gdx.input.setInputProcessor(defaultProcessor());
     }
@@ -187,6 +217,9 @@ public class GameScreen implements Screen {
         game.switchScreen(new MainMenuScreen(game));
     }
 
+    /**
+     * Sets up input handling, including pause toggling on ESC key.
+     */
     private void setupInputHandling() {
         InputMultiplexer im = new InputMultiplexer(new InputAdapter() {
             @Override
@@ -206,6 +239,11 @@ public class GameScreen implements Screen {
         koFont.getData().setScale(2f);
     }
 
+    /**
+     * Returns the default input processor used during gameplay or when resumed.
+     *
+     * @return The configured InputProcessor.
+     */
     private InputProcessor defaultProcessor() {
         return new InputMultiplexer(new InputAdapter() {
             @Override
@@ -220,6 +258,11 @@ public class GameScreen implements Screen {
         }, pauseStage);
     }
 
+    /**
+     * Called when the game should render itself.
+     *
+     * @param delta Time in seconds since the last frame.
+     */
     @Override
     public void render(float delta) {
         if (!isPaused && isAllAlive) {
@@ -235,6 +278,9 @@ public class GameScreen implements Screen {
             isPaused = false;
     }
 
+    /**
+     * Processes user input and updates player actions.
+     */
     private void handleInput() {
         if (!isAllAlive) return;
         // Input mapping for Player 1
@@ -251,6 +297,11 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.P)) game.player2.punch();
     }
 
+    /**
+     * Updates player logic, checks for damage events, and syncs sprites.
+     *
+     * @param delta Time since the last frame.
+     */
     private void updateLogic(float delta) {
         game.player1.update(delta);
         game.player2.update(delta);
@@ -259,6 +310,13 @@ public class GameScreen implements Screen {
         syncSpriteToPlayer(game.player2, player2Sprite);
     }
 
+
+    /**
+     * Checks if either player is in range to apply damage and resolves it.
+     *
+     * @param p1 Attacking player.
+     * @param p2 Target player.
+     */
     private void applyDamageIfInRange(Player p1, Player p2) {
         if (p1.range >= Math.abs(p1.position.x - p2.position.x) && !p1.isPunchDead && p1.isAnimInHitZone) {
             p2.damage(p1.strength);
@@ -270,6 +328,12 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Synchronizes a player's sprite position, frame, and flip state.
+     *
+     * @param player The player whose state is being synced.
+     * @param sprite The sprite associated with the player.
+     */
     private void syncSpriteToPlayer(Player player, Sprite sprite) {
         float otherX = (player == game.player1 ? game.player2.position.x : game.player1.position.x);
         sprite.setX(player.position.x);
@@ -280,6 +344,12 @@ public class GameScreen implements Screen {
         sprite.setScale(playerScaleFactor);
     }
 
+    /**
+     * Handles the KO state and screen transition after a KO event.
+     *
+     * @param delta Time since last frame.
+     * @return True if KO screen transition occurred, false otherwise.
+     */
     private boolean handleKOState(float delta) {
         if (game.player1.isDying || game.player2.isDying) mapMusic.stop();
         if ((game.player1.isFinishedDying || game.player2.isFinishedDying) && isAllAlive) {
@@ -297,6 +367,11 @@ public class GameScreen implements Screen {
         return false;
     }
 
+
+	
+    /**
+     * Draws the entire frame, including background, players, UI, and overlays.
+     */
     private void drawFrame() {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply(true);
@@ -337,6 +412,16 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Draws a health bar with the specified parameters.
+     *
+     * @param batch        The SpriteBatch used for drawing.
+     * @param currentHealth The player's current health.
+     * @param maxHealth     The player's maximum health.
+     * @param x             The x-position of the health bar.
+     * @param y             The y-position of the health bar.
+     * @param fillColor     The color used to fill the health bar.
+     */
     private void drawHealthBar(SpriteBatch batch, int currentHealth, int maxHealth, float x, float y, Color fillColor) {
         float ratio = Math.max(currentHealth / (float) maxHealth, 0f);
         float innerWidth = (HEALTH_BAR_WIDTH - 4) * ratio;
@@ -347,6 +432,9 @@ public class GameScreen implements Screen {
         batch.setColor(Color.WHITE);
     }
 
+    /**
+     * Prints updated health values to the console if they have changed.
+     */
     private void updateDebugHealthDisplay() {
         if (game.player1.health != debugHpP1 || game.player2.health != debugHpP2) {
             debugHpP1 = game.player1.health;
