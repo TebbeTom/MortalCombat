@@ -274,8 +274,10 @@ public class GameScreen implements Screen {
             return;
         drawFrame();
         updateDebugHealthDisplay();
-        if (isFirstFrame)
+        if (isFirstFrame) {
             isPaused = false;
+            isFirstFrame = false;
+        }
     }
 
     /**
