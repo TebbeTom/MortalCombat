@@ -78,7 +78,7 @@ public class Player {
 	public void setMovingLeft(boolean value) {
 		if (isPunching || isTakingDamage)
 			return;
-		if (animType != AnimationType.RUN)
+		if (animType != AnimationType.RUN && !isJumping)
 			changeAnim(AnimationType.RUN);
 		isMovingLeft = value;
 	}
@@ -86,7 +86,7 @@ public class Player {
 	public void setMovingRight(boolean value) {
 		if (isPunching || isTakingDamage)
 			return;
-		if (animType != AnimationType.RUN)
+		if (animType != AnimationType.RUN && !isJumping)
 			changeAnim(AnimationType.RUN);
 		isMovingRight = value;
 	}
