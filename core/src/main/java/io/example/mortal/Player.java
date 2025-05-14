@@ -228,6 +228,8 @@ public class Player {
 		if (animation.isAnimationFinished(currentAnimationTime)) {
 			isPunching = false;
 			isPunchDead = true;
+			if (isJumping)
+				changeAnim(AnimationType.JUMP);
 		}
 	}
 
