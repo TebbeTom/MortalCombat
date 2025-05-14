@@ -70,12 +70,10 @@ public class GameScreen implements Screen {
 
     private Music mapMusic;
 
-    private boolean isKO = false;
+    private boolean isAllAlive = true;
     private float koTimer = 0f;
     private static final float KO_DURATION = 2.5f;
     private BitmapFont koFont;
-    private boolean isDeathAnimPlaying = false;
-    private boolean isMovementLockedAfterDeath = false;
 
 
 
@@ -223,43 +221,28 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (!isPaused && !isKO) {
+        if (!isPaused && isAllAlive) {
             input();
             logic(delta);
         }
 
-        if (!isKO && (game.player1.health <= 0 || game.player2.health <= 0)) {
-            isDeathAnimPlaying = true;
+        if (game.player1.isDying || game.player2.isDying)
             mapMusic.stop();
+
+        if ((game.player1.isFinishedDying || game.player2.isFinishedDying) && isAllAlive){
+            isAllAlive = false;
+            koTimer = 0f;
         }
 
-        if (isDeathAnimPlaying) {
-            // Checke, ob die Death-Animation beendet ist
-            boolean player1DeadDone = game.player1.isDeathAnimationDone();
-            boolean player2DeadDone = game.player2.isDeathAnimationDone();
 
-            if ((game.player1.health <= 0 && player1DeadDone) ||
-                (game.player2.health <= 0 && player2DeadDone)) {
-
-                isDeathAnimPlaying = false;
-                isMovementLockedAfterDeath = true;
-                isKO = true;
-                koTimer = 0f;
-            }
-}
-
-        if (isKO) {
+        if (!isAllAlive) {
             koTimer += delta;
 
             // KO_DURATION ist Fadedauer, 2 Sekunden extra Verzögerung vorher:
-            if (koTimer >= 2f + KO_DURATION) {
-                if(game.player1.health<=0){
-                    game.switchScreen(new KOScreen(game, game.player2Char));
-                    return;
-                }else{
-                    game.switchScreen(new KOScreen(game, game.player1Char));
-                    return;
-                }
+            if (koTimer >= 1f + KO_DURATION) {
+                String winner = game.player1.isFinishedDying ? game.player2Char : game.player1Char;
+                game.switchScreen(new KOScreen(game, winner));
+                return;
             }
 }
 
@@ -269,13 +252,13 @@ public class GameScreen implements Screen {
         if (game.player1.health != debugHpP1 || game.player2.health != debugHpP2){
             debugHpP1 = game.player1.health;
             debugHpP2 = game.player2.health;
-            System.out.println(String.format("1: %d\n2: %d", debugHpP1, debugHpP2) );
+            System.out.println(String.format("HP P1: %d\nHP P2: %d", debugHpP1, debugHpP2) );
 
         }
     }
 
     private void input() {
-        if (isKO || isMovementLockedAfterDeath) return;
+        if (!isAllAlive) return;
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
             game.player1.jump();
@@ -369,7 +352,7 @@ public class GameScreen implements Screen {
             pauseStage.draw();
         }
 
-        if (isKO) {
+        if (!isAllAlive) {
             spriteBatch.begin();
     
             // Schwarzer semi-transparenter Overlay

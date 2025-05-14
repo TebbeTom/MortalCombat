@@ -15,7 +15,7 @@ public class Player {
     public int health;
 	public float maxHealth;
 	private float gravity = -40f;
-	public float range = 325f;
+	public float range = 365f;
 	public int strength = 10;
 	private float startHitTime = 0.3f;
 	private float endHitTime = 0.8f;
@@ -26,15 +26,18 @@ public class Player {
 	private boolean isMovingRight = false;
 	private boolean isJumping = false;
 	private boolean isDucking = false;
+	private boolean wasDucking = false;
 	private boolean isPunching = false;
-	private boolean isDead = false;
+	private boolean isTakingDamage = false;
+	public boolean isFinishedDying = false;
+	public boolean isDying = false;
+	public boolean isPunchDead = true;
 
 	private PlayerAnimations playerAnimations = new PlayerAnimations();
 	public CharacterType characterType;
 	public AnimationType animType = AnimationType.IDLE;
 	public Animation<TextureRegion> animation;
 	public float currentAnimationTime = 0f;
-	public boolean isPunchDead = true;
 	public float stateTime = 0f;
 
 	private Sound soundPunch;
@@ -45,7 +48,6 @@ public class Player {
 
     public Player(Vector2 startPosition, CharacterType characterType, int health, float scaleFactor) {
         this.position = startPosition;
-
 		this.characterType = characterType;
         this.health = health;
 		this.maxHealth = health;
@@ -67,6 +69,10 @@ public class Player {
                 break;
         }
     }
+	
+		public boolean getWasMovingLeft() {
+			return wasMovingLeft;
+		}
 
 	public void setMovingLeft(boolean value) {
 		if (isPunching)
@@ -74,10 +80,6 @@ public class Player {
 		if (animType != AnimationType.RUN)
 			changeAnim(AnimationType.RUN);
 		isMovingLeft = value;
-	}
-
-	public boolean getWasMovingLeft() {
-		return wasMovingLeft;
 	}
 
 	public void setMovingRight(boolean value) {
@@ -90,15 +92,16 @@ public class Player {
 
 	public void update(float delta) {
 		currentAnimationTime += delta;
-		stateTime += delta;
 
-		if (animType == AnimationType.DEATH) {
-            if (animation.isAnimationFinished(currentAnimationTime)) {
-                // Dead and animation over—could notify GameScreen or pause
+		if (isDying && !isFinishedDying) {
+			if (currentAnimationTime > 0.6f) {
+				isFinishedDying = true;
+				// Dead and animation over—could notify GameScreen or pause
 				//invoke Death Screen
-            }
-            return;
-        }
+			}
+			return;
+		}
+		stateTime += delta;
 
 		position.x -= (isMovingLeft ? 1 : 0) * speed.x * delta;
 		position.x += (isMovingRight? 1 : 0) * speed.x * delta;
@@ -106,39 +109,34 @@ public class Player {
 		speed.y += gravity;
 		position.y += speed.y * delta;
 		
-		boolean currentlyJumping = position.y > -290;
-        if (currentlyJumping) {
-            isJumping = true;
-        } else if (isJumping) {
-            // Landed
-            isJumping = false;
-            if (!isPunching) changeAnim(AnimationType.IDLE);    // CHANGED: zurück zu Idle
-        }
-        if (!isJumping) speed.y = 0;
+		isJumping = position.y > -240f;
+        if (!isJumping) speed.y = 0f;
 
 		position.x = MathUtils.clamp(position.x, -240f, 860f);
+		position.y = MathUtils.clamp(position.y, -240f, 450f);
 
-		if(this.characterType.equals("FIGHTER_MAN")){
-			position.y = MathUtils.clamp(position.y, -240, 450);
+		if(isPunching)
+			handleActivePunch(delta);
 
-		}else{
-			position.y = MathUtils.clamp(position.y, -240, 450);
-		}
-
+		if (isTakingDamage && animation.isAnimationFinished(currentAnimationTime))
+			isTakingDamage = false;
 		
 		if (isIdle() && animType != AnimationType.IDLE) { // ^ == XOR
 			changeAnim(AnimationType.IDLE);
 		}
+
+
 		wasMovingLeft = isMovingLeft;
-		isMovingLeft = false;
-		isMovingRight = false;
+		if (!(isTakingDamage && isJumping)) {
+			isMovingLeft = false;
+			isMovingRight = false;
+		}
+		wasDucking = isDucking;
 		isDucking = false;
-		if(isPunching)
-			handleActivePunch(delta);
 	}
 
     public void jump() {
-		if (isJumping)
+		if (isJumping || isTakingDamage)
 			return;
 		speed.y = 900f;
 		isJumping = true;
@@ -155,7 +153,10 @@ public class Player {
 		if (
 			isDucking ||
 			(isMovingLeft ^ isMovingRight) ||
-			isPunching
+			isPunching ||
+			isDying || 
+			isTakingDamage ||
+			isJumping
 		){ return false;}
 		return true;
 	}
@@ -170,14 +171,16 @@ public class Player {
 	}
 
 	public void damage(int amount) {
-        if (isDead || isDucking) return;
+        if (isDying || wasDucking) return;
         health -= amount;
         if (health <= 0) {
             health = 0;
-            isDead = true;
+            isDying = true;
             changeAnim(AnimationType.DEATH);               // CHANGED: Death Animation
 			soundDeath.play();
         } else {
+			isTakingDamage = true;
+			isPunching = false;
             changeAnim(AnimationType.HIT);                 // CHANGED: Hit Animation
 			soundHit.play();
         }
@@ -189,7 +192,6 @@ public class Player {
 		else
 			isAnimInHitZone = false;
 		if(animation.isAnimationFinished(currentAnimationTime)){
-			changeAnim(AnimationType.IDLE);
 			isPunching = false;
 			isPunchDead = true;
 		}
