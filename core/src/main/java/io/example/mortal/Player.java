@@ -183,7 +183,7 @@ public class Player {
 	}
 
 	private void clampPosition() {
-		position.x = MathUtils.clamp(position.x, -240f, 860f);
+		position.x = MathUtils.clamp(position.x, -280f, 910f);
 		position.y = MathUtils.clamp(position.y, -240f, 450f);
 	}
 
