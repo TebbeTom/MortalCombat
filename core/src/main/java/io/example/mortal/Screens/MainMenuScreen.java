@@ -72,7 +72,13 @@ public class MainMenuScreen implements Screen{
         labelStyle.font = skin.getFont("title");
 
         Label headerLabel = new Label("Sterblicher Kampf", labelStyle);
-        table.add(headerLabel).pad(20).padBottom(50).row();
+        table.add(headerLabel).pad(20).padBottom(0).row();
+
+        Label.LabelStyle labelStyle2 = new Label.LabelStyle();
+        labelStyle2.font = skin.getFont("font");
+
+        Label nichtMortal = new Label("(Definitiv nicht Mortal Kombat)", labelStyle2);
+        table.add(nichtMortal).pad(20).padBottom(45).row();
 
         TextButton startButton = new TextButton("START", skin);
         TextButton optionsButton = new TextButton("Options", skin);
