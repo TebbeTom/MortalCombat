@@ -65,8 +65,9 @@ public class GameScreen implements Screen {
 
     private int debugHpP1 = 100;
     private int debugHpP2 = 100;
+    private boolean isFirstFrame = true;
 
-    private boolean isPaused = false;
+    private boolean isPaused = true;
 
     private Music mapMusic;
 
@@ -101,7 +102,7 @@ public class GameScreen implements Screen {
         if(!(this.game.mortalKombat)){
             mapMusic = Gdx.audio.newMusic(Gdx.files.internal(game.selectedMap.musicFile));
         }else{
-            mapMusic = Gdx.audio.newMusic(Gdx.files.internal("mortal.mp3"));
+            mapMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/backgroundMusic/mortal.mp3"));
         }
         mapMusic.setLooping(true);
         mapMusic.setVolume(game.centralVolume);
@@ -225,28 +226,32 @@ public class GameScreen implements Screen {
             input();
             logic(delta);
         }
-
+        
         if (game.player1.isDying || game.player2.isDying)
-            mapMusic.stop();
-
+        mapMusic.stop();
+        
         if ((game.player1.isFinishedDying || game.player2.isFinishedDying) && isAllAlive){
             isAllAlive = false;
             koTimer = 0f;
         }
-
-
+        
+        
         if (!isAllAlive) {
             koTimer += delta;
-
+            
             // KO_DURATION ist Fadedauer, 2 Sekunden extra Verzögerung vorher:
             if (koTimer >= 1f + KO_DURATION) {
                 String winner = game.player1.isFinishedDying ? game.player2Char : game.player1Char;
                 game.switchScreen(new KOScreen(game, winner));
                 return;
             }
-}
-
+        }
+        
         draw();
+        if (isFirstFrame) {
+            isPaused = false;
+            isFirstFrame = false;
+        }
         //todo: remove following
 
         if (game.player1.health != debugHpP1 || game.player2.health != debugHpP2){

@@ -33,7 +33,7 @@ public class NameSelectScreen implements Screen {
     public boolean eggLock = false;
     public NameSelectScreen(Main game) {
         this.game = game;
-        easterEgg = Gdx.audio.newMusic(Gdx.files.internal("easterEggName.mp3"));
+        easterEgg = Gdx.audio.newMusic(Gdx.files.internal("sounds/easterEggName.mp3"));
         easterEgg.setLooping(false);
     }
 

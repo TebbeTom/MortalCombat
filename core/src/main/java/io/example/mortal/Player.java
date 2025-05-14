@@ -56,16 +56,16 @@ public class Player {
 
 		switch (characterType) {
             case MARTIAL_HERO:
-                soundPunch = Gdx.audio.newSound(Gdx.files.internal("sounds/HeroAttack.mp3"));
-                soundHit   = Gdx.audio.newSound(Gdx.files.internal("sounds/HeroHit.mp3"));
-                soundDeath = Gdx.audio.newSound(Gdx.files.internal("sounds/HeroDeath.mp3"));
-                soundJump  = Gdx.audio.newSound(Gdx.files.internal("sounds/HeroJump.mp3"));
+                soundPunch = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/HeroAttack.mp3"));
+                soundHit   = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/HeroHit.mp3"));
+                soundDeath = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/HeroDeath.mp3"));
+                soundJump  = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/HeroJump.mp3"));
                 break;
             case FIGHTER_MAN:
-                soundPunch = Gdx.audio.newSound(Gdx.files.internal("sounds/ManAttack.mp3"));
-                soundHit   = Gdx.audio.newSound(Gdx.files.internal("sounds/ManHit.mp3"));
-                soundDeath = Gdx.audio.newSound(Gdx.files.internal("sounds/ManDeath.mp3"));
-                soundJump  = Gdx.audio.newSound(Gdx.files.internal("sounds/ManJump.mp3"));
+                soundPunch = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/ManAttack.mp3"));
+                soundHit   = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/ManHit.mp3"));
+                soundDeath = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/ManDeath.mp3"));
+                soundJump  = Gdx.audio.newSound(Gdx.files.internal("sounds/playerSounds/ManJump.mp3"));
                 break;
         }
     }
