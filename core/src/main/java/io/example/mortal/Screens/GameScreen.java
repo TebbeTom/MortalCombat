@@ -294,11 +294,11 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) game.player1.duck();
         // Input mapping for Player 2
         if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) game.player2.setMovingLeft(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ENTER)) game.player2.setMovingRight(true);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) game.player2.setMovingRight(true);
         if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_5)) game.player2.drop();
-        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) game.player2.jump();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) game.player2.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.M)) game.player2.duck();
-        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) game.player2.punch();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ENTER)) game.player2.punch();
     }
 
     /**
