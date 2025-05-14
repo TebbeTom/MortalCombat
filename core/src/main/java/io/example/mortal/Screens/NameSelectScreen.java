@@ -57,7 +57,7 @@ public class NameSelectScreen implements Screen {
         name2Field = new TextField("", skin);
         name2Field.setMessageText("Player 2");
 
-        table.add(name1Field).width(250).padRight(20);
+        table.add(name1Field).width(250).padRight(30);
         table.add(name2Field).width(250).row();
         table.row().padTop(30);
 
@@ -69,8 +69,8 @@ public class NameSelectScreen implements Screen {
                 String n1 = name1Field.getText().trim();
                 String n2 = name2Field.getText().trim();
 
-                if (n1.isEmpty()) n1 = "Player 1";
-                if (n2.isEmpty()) n2 = "Player 2";
+                if (n1.isEmpty()) n1 = "  Player 1";
+                if (n2.isEmpty()) n2 = "  Player 2";
                 
                 game.player1Char = n1;
                 game.player2Char = n2;
@@ -78,7 +78,17 @@ public class NameSelectScreen implements Screen {
                 game.switchScreen(new GameScreen(game));
             }
         });
-        table.add(confirmBtn).colspan(2).width(200).padTop(10);
+        table.add(confirmBtn).colspan(2).width(200).padTop(15).row();
+
+        TextButton backBtn = new TextButton("Back", skin);
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.playClickEffect();
+                game.switchScreen(new io.example.mortal.Screens.MapSelectScreen(game));
+            }
+        });
+        table.add(backBtn).colspan(2).width(200).padTop(15);
 
         stage.addActor(table);
     }
