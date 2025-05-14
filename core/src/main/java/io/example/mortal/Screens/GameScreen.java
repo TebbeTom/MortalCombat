@@ -286,17 +286,19 @@ public class GameScreen implements Screen {
     private void handleInput() {
         if (!isAllAlive) return;
         // Input mapping for Player 1
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) game.player1.jump();
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) game.player1.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.A)) game.player1.setMovingLeft(true);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) game.player1.setMovingRight(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) game.player1.punch();
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) game.player1.drop();
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) game.player1.punch();
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) game.player1.duck();
         // Input mapping for Player 2
-        if (Gdx.input.isKeyPressed(Input.Keys.L)) game.player2.setMovingLeft(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.APOSTROPHE)) game.player2.setMovingRight(true);
-        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) game.player2.jump();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) game.player2.setMovingLeft(true);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ENTER)) game.player2.setMovingRight(true);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_5)) game.player2.drop();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) game.player2.jump();
         if (Gdx.input.isKeyPressed(Input.Keys.M)) game.player2.duck();
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) game.player2.punch();
+        if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) game.player2.punch();
     }
 
     /**
@@ -321,12 +323,16 @@ public class GameScreen implements Screen {
      */
     private void applyDamageIfInRange(Player p1, Player p2) {
         if (p1.range >= Math.abs(p1.position.x - p2.position.x) && !p1.isPunchDead && p1.isAnimInHitZone) {
-            p2.damage(p1.strength);
-            p1.isPunchDead = true;
+            if (Math.abs(p1.position.y - p2.position.y) <= 200f) {
+                p2.damage(p1.strength);
+                p1.isPunchDead = true;
+            }
         }
         if (p2.range >= Math.abs(p2.position.x - p1.position.x) && !p2.isPunchDead && p2.isAnimInHitZone) {
-            p1.damage(p2.strength);
-            p2.isPunchDead = true;
+            if (Math.abs(p1.position.y - p2.position.y) <= 200f) {
+                p1.damage(p2.strength);
+                p2.isPunchDead = true;
+            }
         }
     }
 

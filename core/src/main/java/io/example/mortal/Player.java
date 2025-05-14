@@ -39,6 +39,7 @@ public class Player {
 	private boolean isMovingLeft = false;
 	private boolean wasMovingLeft = false;
 	private boolean isMovingRight = false;
+	private boolean isDropping = false;
 	private boolean isJumping = false;
 	private boolean isDucking = false;
 	private boolean wasDucking = false;
@@ -99,11 +100,18 @@ public class Player {
 		isMovingRight = value;
 	}
 
+	public void drop() {
+		isPunching = false;
+		isPunchDead = true;
+		isDropping = true;
+	}
+
 	public void jump() {
 		if (isJumping || isTakingDamage) return;
 		speed.y = 1500f;
 		isJumping = true;
-		changeAnim(AnimationType.JUMP);
+		if (!isPunching)
+			changeAnim(AnimationType.JUMP);
 		soundJump.play();
 	}
 
@@ -177,9 +185,15 @@ public class Player {
 
 	private void handleJumpPhysics(float delta) {
 		speed.y += gravity;
+		if (isDropping) {
+			speed.y = Math.min(-1800, speed.y);
+			isDropping = false;
+		}
 		position.y += speed.y * delta;
 		isJumping = position.y > -240f;
-		if (!isJumping) speed.y = 0f;
+		if (!isJumping){
+			speed.y = 0f;
+		}
 	}
 
 	private void clampPosition() {

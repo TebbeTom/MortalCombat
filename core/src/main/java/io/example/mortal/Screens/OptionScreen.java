@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+
 import io.example.mortal.Main;
 import io.example.mortal.SaveLoadManager;
 
@@ -20,20 +22,21 @@ public class OptionScreen implements Screen {
     private Skin skin;
     private Slider volumeSlider;
 
-    public static final String KEYBINDS_TEXT =
+    public static final String KEYBINDS_TEXT_P1 =
         "PLAYER 1:\n" +
+        "Jump: W\n" +
+        "Drop: S\n" +
         "Move Left: A\n" +
         "Move Right: D\n" +
-        "Punch: W\n" +
-        "Jump: SPACE\n" +
-        "Duck: LEFT SHIFT\n\n" +
+        "Punch: SPACE\n";
 
+    public static final String KEYBINDS_TEXT_P2 =
         "PLAYER 2:\n" +
-        "Move Left: L\n" +
-        "Move Right: '\n" +
-        "Punch: P\n" +
-        "Jump: RIGHT CTRL\n" +
-        "Duck: M\n";
+        "Jump: NUMPAD_8\n" +
+        "Move Left: NUMPAD_4\n" +
+        "Drop: NUMPAD_5\n" +
+        "Move Right: NUMPAD_6\n" +
+        "Punch: NUMPAD_ENTER\n";
 
     public OptionScreen(Main game) {
         this.game = game;
@@ -46,6 +49,7 @@ public class OptionScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
+        table.center();
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("font");
@@ -64,12 +68,18 @@ public class OptionScreen implements Screen {
         return false;
         });
 
-        Label keybindsLabel = new Label(KEYBINDS_TEXT, skin);
-        keybindsLabel.setWrap(true); // Falls Text umbrechen soll
-        keybindsLabel.setFontScale(0.8f); // Optional, falls zu groß
+        Label keybindsLabelP1 = new Label(KEYBINDS_TEXT_P1, skin);
+        Label keybindsLabelP2 = new Label(KEYBINDS_TEXT_P2, skin);
+        keybindsLabelP1.setWrap(true); // Falls Text umbrechen soll
+        keybindsLabelP1.setFontScale(0.8f); // Optional, falls zu groß
+        keybindsLabelP1.setAlignment(Align.center);
+        keybindsLabelP2.setWrap(true); // Falls Text umbrechen soll
+        keybindsLabelP2.setFontScale(0.8f); // Optional, falls zu groß
+        keybindsLabelP2.setAlignment(Align.center);
 
         // Tabelle erweitern
-        table.add(keybindsLabel).width(500).pad(20).row();
+        table.add(keybindsLabelP1).width(500).pad(20);
+        table.add(keybindsLabelP2).width(500).pad(20).row();
 
         // Zurück zum Hauptmenü
         TextButton backButton = new TextButton("Back", skin);
@@ -81,9 +91,9 @@ public class OptionScreen implements Screen {
             }
         });
 
-        table.add(volumeLabel).padBottom(20).row();
-        table.add(volumeSlider).width(backButton.getWidth()).pad(10).row();
-        table.add(backButton).pad(10).row();
+        table.add(volumeLabel).colspan(2).padBottom(20).row();
+        table.add(volumeSlider).colspan(2).width(backButton.getWidth()).pad(10).row();
+        table.add(backButton).colspan(2).pad(10).row();
 
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
