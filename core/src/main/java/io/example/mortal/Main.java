@@ -24,6 +24,8 @@ public class Main extends Game {
     public float centralVolume = 0.5f;
     public static Sound clickEffect;
 
+    public boolean mortalKombat = false;
+
     @Override
     public void create() {
         batch = new SpriteBatch();

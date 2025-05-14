@@ -2,6 +2,7 @@ package io.example.mortal.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.mortal.Main;
@@ -26,8 +28,12 @@ public class NameSelectScreen implements Screen {
     private TextField name1Field;
     private TextField name2Field;
 
+    public Music easterEgg;
+    public boolean eggLock = false;
     public NameSelectScreen(Main game) {
         this.game = game;
+        easterEgg = Gdx.audio.newMusic(Gdx.files.internal("easterEggName.mp3"));
+        easterEgg.setLooping(false);
     }
 
     @Override
@@ -65,17 +71,40 @@ public class NameSelectScreen implements Screen {
         confirmBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (eggLock){
+                 return;
+                }
                 game.playClickEffect();
                 String n1 = name1Field.getText().trim();
                 String n2 = name2Field.getText().trim();
 
                 if (n1.isEmpty()) n1 = "  Player 1";
                 if (n2.isEmpty()) n2 = "  Player 2";
-                
+
                 game.player1Char = n1;
                 game.player2Char = n2;
                 SaveLoadManager.save(game);
+
+                if (n1.equals("Jannik") || n2.equals("Jannik")) {
+                    eggLock = true;
+                    easterEgg.play();
+
+                    // Sounddauer (in Sekunden) — musst du kennen!
+                    float soundDuration = 2f;
+
+                    Timer.schedule(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            game.switchScreen(new GameScreen(game));
+                        }
+                    }, soundDuration); // Nach Sounddauer ausführen
+                } else {
+                    if (n1.equals("Mortal") && n2.equals("Kombat")) {
+                        game.mortalKombat = true;
+                    }
+                }
                 game.switchScreen(new GameScreen(game));
+
             }
         });
         table.add(confirmBtn).colspan(2).width(200).padTop(15).row();
@@ -84,6 +113,9 @@ public class NameSelectScreen implements Screen {
         backBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (eggLock){
+                 return;
+                }
                 game.playClickEffect();
                 game.switchScreen(new io.example.mortal.Screens.MapSelectScreen(game));
             }

@@ -54,6 +54,17 @@ public class KOScreen implements Screen {
 
         table.add(koLabel).padBottom(30).row();
 
+        TextButton restartButton = new TextButton("Restart Match", skin);
+        restartButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.playClickEffect();
+                Gdx.graphics.setWindowedMode(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+                game.switchScreen(new GameScreen(game));
+            }
+        });
+        table.add(restartButton).pad(15).row();
+
         TextButton mainMenuButton = new TextButton("Main Menu", skin);
         mainMenuButton.addListener(new ClickListener() {
             @Override

@@ -84,7 +84,6 @@ public class GameScreen implements Screen {
         game.player1 = new Player(new Vector2(100f, -80f), CharacterType.FIGHTER_MAN, 100, playerScaleFactor);
         game.player2 = new Player(new Vector2(500f, -80f), CharacterType.MARTIAL_HERO, 100, playerScaleFactor);
         
-
         game.stopMenuMusic();
     } 
     
@@ -95,16 +94,20 @@ public class GameScreen implements Screen {
             mapMusic.stop();
         }
 
-        mapMusic = Gdx.audio.newMusic(Gdx.files.internal(game.selectedMap.musicFile));
-        mapMusic.setLooping(true);
-        mapMusic.setVolume(game.centralVolume);
-        mapMusic.play();
-
         camera = new OrthographicCamera();
         camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
         camera.update();
         viewport = new StretchViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+        if(!(this.game.mortalKombat)){
+            mapMusic = Gdx.audio.newMusic(Gdx.files.internal(game.selectedMap.musicFile));
+        }else{
+            mapMusic = Gdx.audio.newMusic(Gdx.files.internal("mortal.mp3"));
+        }
+        mapMusic.setLooping(true);
+        mapMusic.setVolume(game.centralVolume);
+        mapMusic.play();
 
         spriteBatch = new SpriteBatch();
 

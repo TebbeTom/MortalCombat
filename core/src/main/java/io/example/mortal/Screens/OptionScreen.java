@@ -20,6 +20,21 @@ public class OptionScreen implements Screen {
     private Skin skin;
     private Slider volumeSlider;
 
+    public static final String KEYBINDS_TEXT =
+        "PLAYER 1:\n" +
+        "Move Left: A\n" +
+        "Move Right: D\n" +
+        "Punch: W\n" +
+        "Jump: SPACE\n" +
+        "Duck: LEFT SHIFT\n\n" +
+
+        "PLAYER 2:\n" +
+        "Move Left: L\n" +
+        "Move Right: '\n" +
+        "Punch: P\n" +
+        "Jump: RIGHT CTRL\n" +
+        "Duck: M\n";
+
     public OptionScreen(Main game) {
         this.game = game;
     }
@@ -48,6 +63,13 @@ public class OptionScreen implements Screen {
         }
         return false;
         });
+
+        Label keybindsLabel = new Label(KEYBINDS_TEXT, skin);
+        keybindsLabel.setWrap(true); // Falls Text umbrechen soll
+        keybindsLabel.setFontScale(0.8f); // Optional, falls zu groß
+
+        // Tabelle erweitern
+        table.add(keybindsLabel).width(500).pad(20).row();
 
         // Zurück zum Hauptmenü
         TextButton backButton = new TextButton("Back", skin);
