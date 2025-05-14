@@ -108,8 +108,8 @@ public class NameSelectScreen implements Screen {
                     if (n1.equals("Mortal") && n2.equals("Kombat")) {
                         game.mortalKombat = true;
                     }
+                    game.switchScreen(new GameScreen(game));
                 }
-                game.switchScreen(new GameScreen(game));
 
             }
         });

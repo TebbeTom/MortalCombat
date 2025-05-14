@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.mortal.Main;
-import io.example.mortal.Player;
 
 public class KOScreen implements Screen {
     private final Main game;
